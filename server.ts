@@ -170,7 +170,7 @@ function normalizeGeminiContents(messages: any[], prompt?: string, attachments?:
 async function callGeminiWithResilience({
   contents,
   config = {},
-  preferredModel = 'gemini-3.1-flash-lite',
+  preferredModel = 'gemini-3.8-flash',
   enableSearch = false,
 }: {
   contents: any;
@@ -180,9 +180,22 @@ async function callGeminiWithResilience({
 }): Promise<{ response: any; usedModel: string; usedSearch: boolean }> {
   // Determine cascade sequence: start with preferred, fallback to gemini-3.1-flash-lite, then gemini-3.8-flash
   const modelsToTry: string[] = [];
-  if (preferredModel) modelsToTry.push(preferredModel);
-  if (!modelsToTry.includes('gemini-3.1-flash-lite')) modelsToTry.push('gemini-3.1-flash-lite');
+  // Keep the cascade restricted to real Gemini API model IDs.
+  const allowedModels = new Set([
+    'gemini-3.8-flash',
+    'gemini-3.1-flash-lite',
+    'gemini-4-argon',
+    'gemini-3.1-flash-lite-image',
+    'gemini-3.1-flash-image',
+    'gemini-3-pro-image',
+  ]);
+  if (preferredModel && allowedModels.has(preferredModel)) modelsToTry.push(preferredModel);
   if (!modelsToTry.includes('gemini-3.8-flash')) modelsToTry.push('gemini-3.8-flash');
+  if (!modelsToTry.includes('gemini-3.1-flash-lite')) modelsToTry.push('gemini-3.1-flash-lite');
+
+  if (!apiKey) {
+    throw new Error('GEMINI_API_KEY is missing. Add it to your environment secrets and restart STAR AI.');
+  }
 
   let lastError: any = null;
 
@@ -235,11 +248,11 @@ app.get('/api/health', (req, res) => {
     appName: 'STAR AI',
     version: '2.5.0',
     hasApiKey: Boolean(apiKey),
-    defaultModel: 'gemini-3.1-flash-lite',
+    defaultModel: 'gemini-3.8-flash',
     supportedModels: [
-      { id: 'gemini-3.1-flash-lite', name: 'STAR Lite 3.1 (Default)', description: 'Ultra-low latency, robust responses' },
-      { id: 'gemini-3.8-flash', name: 'STAR Flash 3.8', description: 'Multimodal reasoning' },
-      { id: 'gemini-4-argon', name: 'STAR Quantum Pro', description: 'Deep STEM reasoning, complex architecture' }
+      { id: 'gemini-3.8-flash', name: 'STAR Flash 3.8 (Default)', description: 'Fast multimodal responses and coding' },
+      { id: 'gemini-3.1-flash-lite', name: 'STAR Lite 3.1', description: 'Cost-efficient responses' },
+      { id: 'gemini-4-argon', name: 'STAR Quantum Pro', description: 'Advanced reasoning; availability depends on API access' }
     ],
     groundingAvailable: true
   });
@@ -253,7 +266,7 @@ app.post('/api/chat', async (req, res) => {
       messages = [],
       prompt = '',
       systemInstruction = '',
-      model = 'gemini-3.1-flash-lite',
+      model = 'gemini-3.8-flash',
       enableSearch = false,
       temperature = 0.7,
       attachments = []
@@ -322,7 +335,7 @@ app.post('/api/chat', async (req, res) => {
     const elapsed = Date.now() - startTime;
     console.error(`[STAR-AI-SERVER] [ERROR] /api/chat failed after ${elapsed}ms:`, error?.message || error);
     const friendlyMessage = formatHumanError(error);
-    res.status(500).json({ error: friendlyMessage, success: false });
+    res.status(/GEMINI_API_KEY is missing/i.test(friendlyMessage) ? 503 : 500).json({ error: friendlyMessage, success: false });
   }
 });
 
@@ -513,6 +526,22 @@ function generateFallbackArtwork(prompt: string, style: string): string {
   </svg>`;
 }
 
+// Parse structured model output robustly (handles accidental Markdown fences).
+function parseModelJson<T = any>(raw: string | undefined | null): T {
+  if (!raw || !raw.trim()) throw new Error('The AI returned an empty response. Please try again.');
+  const cleaned = raw.trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
+  try {
+    return JSON.parse(cleaned) as T;
+  } catch {
+    const first = cleaned.indexOf('{');
+    const last = cleaned.lastIndexOf('}');
+    if (first >= 0 && last > first) {
+      try { return JSON.parse(cleaned.slice(first, last + 1)) as T; } catch {}
+    }
+    throw new Error('The AI response was not valid JSON. Please try again.');
+  }
+}
+
 // 5. AI Teacher & Tutor API (Lesson generation, Tamil-to-English, Quiz, Flashcards)
 app.post('/api/teacher/lesson', async (req, res) => {
   try {
@@ -522,6 +551,10 @@ app.post('/api/teacher/lesson', async (req, res) => {
       mode = 'explain_step_by_step',
       languageSupport = 'none'
     } = req.body;
+
+    if (!topic || typeof topic !== 'string' || !topic.trim()) {
+      return res.status(400).json({ error: 'Lesson topic is required.', success: false });
+    }
 
     const systemPrompt = `You are STAR TEACHER, an encouraging, patient, world-class personal AI tutor.
 Topic: "${topic}". Student Level: "${level}". Teaching Mode: "${mode}".
@@ -562,7 +595,7 @@ You must return a structured JSON response matching this format:
       preferredModel: 'gemini-3.1-flash-lite'
     });
 
-    const parsed = JSON.parse(response.text || '{}');
+    const parsed = parseModelJson(response.text);
     res.json({ success: true, lesson: parsed });
   } catch (error: any) {
     res.status(500).json({ error: formatHumanError(error), success: false });
@@ -617,7 +650,7 @@ Return JSON strictly matching this schema:
       preferredModel: 'gemini-3.1-flash-lite'
     });
 
-    const parsed = JSON.parse(response.text || '{}');
+    const parsed = parseModelJson(response.text);
     res.json({ success: true, project: parsed });
   } catch (error: any) {
     res.status(500).json({ error: formatHumanError(error), success: false });
@@ -667,7 +700,7 @@ Return JSON matching:
       preferredModel: 'gemini-3.1-flash-lite'
     });
 
-    const parsed = JSON.parse(response.text || '{}');
+    const parsed = parseModelJson(response.text);
     res.json({ success: true, app: parsed });
   } catch (error: any) {
     res.status(500).json({ error: formatHumanError(error), success: false });
@@ -715,7 +748,7 @@ Return JSON:
       preferredModel: 'gemini-3.1-flash-lite'
     });
 
-    const parsed = JSON.parse(response.text || '{}');
+    const parsed = parseModelJson(response.text);
     res.json({ success: true, storyboard: parsed });
   } catch (error: any) {
     res.status(500).json({ error: formatHumanError(error), success: false });
@@ -762,7 +795,7 @@ Return JSON:
       preferredModel: 'gemini-3.1-flash-lite'
     });
 
-    const parsed = JSON.parse(response.text || '{}');
+    const parsed = parseModelJson(response.text);
     res.json({ success: true, plan: parsed });
   } catch (error: any) {
     res.status(500).json({ error: formatHumanError(error), success: false });
@@ -773,6 +806,9 @@ Return JSON:
 app.post('/api/tasks/execute-step', async (req, res) => {
   try {
     const { objective, step, previousOutputs = [] } = req.body;
+    if (!objective || !step || typeof step !== 'object' || !step.title) {
+      return res.status(400).json({ error: 'Objective and a valid task step are required.', success: false });
+    }
 
     const prompt = `Objective: ${objective}
 Step to execute: ${step.title} (${step.description})
