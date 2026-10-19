@@ -1,0 +1,6 @@
+{
+  "name": "STAR AI - Advanced Multimodal AI Assistant",
+  "description": "Your World. Your Ideas. One Intelligent Assistant. Multimodal AI with 3D human avatar, web research, AI teacher, developer sandbox, app builder, image & video studio, voice, and autonomous agent workflows.",
+  "requestFramePermissions": ["camera", "microphone", "display-capture"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
