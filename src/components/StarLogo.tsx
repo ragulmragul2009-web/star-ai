@@ -52,14 +52,14 @@ export const StarLogo: React.FC<StarLogoProps> = ({
         >
           <defs>
             <linearGradient id="starGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#35D7FF" />
-              <stop offset="50%" stopColor="#8B5CF6" />
-              <stop offset="100%" stopColor="#35D7FF" />
+              <stop offset="0%" stopColor="#2563EB" />
+              <stop offset="50%" stopColor="#7C3AED" />
+              <stop offset="100%" stopColor="#0284C7" />
             </linearGradient>
             <linearGradient id="orbitalGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#35D7FF" stopOpacity="0.8" />
-              <stop offset="50%" stopColor="#8B5CF6" stopOpacity="0.4" />
-              <stop offset="100%" stopColor="#35D7FF" stopOpacity="0.2" />
+              <stop offset="0%" stopColor="#2563EB" stopOpacity="0.8" />
+              <stop offset="50%" stopColor="#7C3AED" stopOpacity="0.5" />
+              <stop offset="100%" stopColor="#0284C7" stopOpacity="0.3" />
             </linearGradient>
             <filter id="starCoreGlow" x="-50%" y="-50%" width="200%" height="200%">
               <feGaussianBlur in="SourceGraphic" stdDeviation="2" />
@@ -83,8 +83,8 @@ export const StarLogo: React.FC<StarLogoProps> = ({
           <circle
             cx="84"
             cy="36"
-            r="3"
-            fill="#35D7FF"
+            r="3.5"
+            fill="#2563EB"
             className={animated ? 'animate-twinkle' : ''}
           />
 
@@ -92,15 +92,15 @@ export const StarLogo: React.FC<StarLogoProps> = ({
           <polygon
             points="50,14 61,38 86,41 68,58 73,83 50,70 27,83 32,58 14,41 39,38"
             fill="url(#starGradient)"
-            stroke="#080D1B"
-            strokeWidth="1.5"
+            stroke="#FFFFFF"
+            strokeWidth="2"
             strokeLinejoin="round"
           />
 
           {/* Subtle Inner Star Facets */}
           <polygon
             points="50,22 57,40 76,43 62,56 66,75 50,65"
-            fill="rgba(255, 255, 255, 0.2)"
+            fill="rgba(255, 255, 255, 0.3)"
           />
 
           {/* Glowing Luminous AI Core */}
@@ -124,17 +124,17 @@ export const StarLogo: React.FC<StarLogoProps> = ({
       {showText && (
         <div className="flex flex-col justify-center leading-tight">
           <div className="flex items-center gap-1.5">
-            <span className={`font-black tracking-wider text-white ${text}`}>
+            <span className={`font-black tracking-wider text-slate-900 ${text}`}>
               STAR
             </span>
             <span
-              className={`font-extrabold tracking-wider bg-gradient-to-r from-[#35D7FF] to-[#8B5CF6] bg-clip-text text-transparent ${text}`}
+              className={`font-extrabold tracking-wider bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent ${text}`}
             >
               AI
             </span>
           </div>
           {showTagline && (
-            <span className={`font-medium tracking-wide text-[#98A3B8] ${tagline}`}>
+            <span className={`font-medium tracking-wide text-slate-500 ${tagline}`}>
               Your World. Your Ideas.
             </span>
           )}

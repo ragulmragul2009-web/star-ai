@@ -13,18 +13,15 @@ import {
   Check,
   RotateCcw,
   Volume2,
-  VolumeX,
   ExternalLink,
   Sparkles,
   X,
-  FileCode,
   FileText,
   FileAudio,
-  Search,
-  Zap,
   Globe,
   Square,
-  Trash2
+  BookOpen,
+  Languages
 } from 'lucide-react';
 
 interface ChatWorkspaceProps {
@@ -44,6 +41,10 @@ interface ChatWorkspaceProps {
   enableSearch: boolean;
   onToggleSearch: () => void;
   selectedModel: string;
+  explanationLevel?: 'basic' | 'normal' | 'advanced';
+  onSelectExplanationLevel?: (lvl: 'basic' | 'normal' | 'advanced') => void;
+  preferredLanguage?: string;
+  onSelectLanguage?: (lang: string) => void;
   onStopGeneration?: () => void;
   onRegenerateResponse?: () => void;
   onClearConversation?: () => void;
@@ -66,6 +67,10 @@ export const ChatWorkspace: React.FC<ChatWorkspaceProps> = ({
   enableSearch,
   onToggleSearch,
   selectedModel,
+  explanationLevel = 'normal',
+  onSelectExplanationLevel,
+  preferredLanguage = 'en',
+  onSelectLanguage,
   onStopGeneration,
   onRegenerateResponse,
   onClearConversation,
@@ -177,7 +182,7 @@ export const ChatWorkspace: React.FC<ChatWorkspaceProps> = ({
         videoRef.current.srcObject = stream;
         videoRef.current.play();
       }
-    } catch (err) {
+    } catch {
       alert('Unable to access webcam. Please check browser permissions.');
       setShowCameraModal(false);
     }
@@ -215,7 +220,7 @@ export const ChatWorkspace: React.FC<ChatWorkspaceProps> = ({
   const starterPrompts = [
     {
       title: 'Analyze & Teach Code',
-      desc: 'Explain how async/await works under the hood in JavaScript',
+      desc: 'Explain how async/await works under the hood in JavaScript with clear examples',
       prompt: 'Explain how asynchronous programming and the event loop work in JavaScript, with a clear step-by-step mental model and visual example.',
     },
     {
@@ -224,21 +229,21 @@ export const ChatWorkspace: React.FC<ChatWorkspaceProps> = ({
       prompt: 'Help me practice English for a job interview. Provide key professional phrases with their Tamil translations and pronunciation tips.',
     },
     {
-      title: 'Web Research with Citations',
-      desc: 'Search for the latest breakthrough in fusion energy in 2026',
-      prompt: 'Search the web for the latest major breakthroughs and status of commercial nuclear fusion power in 2026. Provide verified facts and citations.',
+      title: 'What is HTML & CSS?',
+      desc: 'Explain web development fundamentals in simple beginner-friendly English',
+      prompt: 'What is HTML? Explain in simple English with a practical beginner-friendly example.',
     },
     {
-      title: 'Design Full-Stack App',
-      desc: 'Architect a fruit juice delivery system with PostgreSQL & React',
-      prompt: 'Create the architecture specification, database schema, and interactive React UI for a high-end cold-pressed juice subscription service.',
+      title: 'Web Research with Citations',
+      desc: 'Search for the latest breakthrough in fusion energy with verified sources',
+      prompt: 'Search the web for the latest major breakthroughs and status of commercial nuclear fusion power in 2026. Provide verified facts and citations.',
     },
   ];
 
   return (
-    <div className="flex-1 flex overflow-hidden relative">
+    <div className="flex-1 flex overflow-hidden relative bg-slate-50">
       {/* Central Chat Area */}
-      <div className="flex-1 flex flex-col h-full overflow-hidden bg-gradient-to-b from-[#080D1B] via-[#0A1024] to-[#080D1B]">
+      <div className="flex-1 flex flex-col h-full overflow-hidden bg-slate-50">
         {/* Messages Stream */}
         <div className="flex-1 overflow-y-auto px-4 py-6 md:px-8 space-y-6">
           {messages.length === 0 ? (
@@ -246,10 +251,10 @@ export const ChatWorkspace: React.FC<ChatWorkspaceProps> = ({
             <div className="h-full flex flex-col items-center justify-center max-w-3xl mx-auto text-center py-8">
               <StarLogo size="xl" showText={true} showTagline={true} animated={true} />
 
-              <h2 className="mt-6 text-2xl md:text-3xl font-extrabold text-white tracking-tight">
-                How can <span className="bg-gradient-to-r from-[#35D7FF] to-[#8B5CF6] bg-clip-text text-transparent">STAR AI</span> empower you today?
+              <h2 className="mt-6 text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">
+                How can <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">STAR AI</span> empower you today?
               </h2>
-              <p className="mt-2 text-sm text-[#98A3B8] max-w-xl">
+              <p className="mt-2 text-sm text-slate-600 max-w-xl">
                 Experience multimodal intelligence with real-time web grounding, conversational 3D avatar, code sandbox, and multi-step autonomous workflows.
               </p>
 
@@ -259,13 +264,13 @@ export const ChatWorkspace: React.FC<ChatWorkspaceProps> = ({
                   <button
                     key={idx}
                     onClick={() => onSendMessage(p.prompt, [])}
-                    className="p-4 rounded-2xl bg-[#111B35]/70 border border-[#35D7FF]/15 hover:border-[#35D7FF]/40 hover:bg-[#111B35] transition-all group shadow-lg shadow-[#080D1B]/50"
+                    className="p-4 rounded-2xl bg-white border border-slate-200/90 hover:border-blue-400 hover:shadow-md transition-all group shadow-xs cursor-pointer"
                   >
-                    <div className="flex items-center gap-2 text-xs font-bold text-[#35D7FF]">
+                    <div className="flex items-center gap-2 text-xs font-bold text-blue-600">
                       <Sparkles className="w-3.5 h-3.5" />
                       <span>{p.title}</span>
                     </div>
-                    <p className="mt-1 text-xs text-[#98A3B8] group-hover:text-[#F5F7FF] transition-colors line-clamp-2">
+                    <p className="mt-1 text-xs text-slate-600 group-hover:text-slate-900 transition-colors line-clamp-2">
                       {p.desc}
                     </p>
                   </button>
@@ -284,19 +289,19 @@ export const ChatWorkspace: React.FC<ChatWorkspaceProps> = ({
                   >
                     {/* Assistant Avatar Badge */}
                     {!isUser && (
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#35D7FF] to-[#8B5CF6] p-[1.5px] shrink-0 mt-1">
-                        <div className="w-full h-full rounded-full bg-[#080D1B] flex items-center justify-center">
-                          <Sparkles className="w-4 h-4 text-[#35D7FF]" />
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 p-[1.5px] shrink-0 mt-1 shadow-xs">
+                        <div className="w-full h-full rounded-full bg-white flex items-center justify-center">
+                          <Sparkles className="w-4 h-4 text-blue-600" />
                         </div>
                       </div>
                     )}
 
                     {/* Bubble Content */}
                     <div
-                      className={`max-w-[85%] md:max-w-[78%] rounded-2xl p-4 md:p-5 shadow-xl transition-all ${
+                      className={`max-w-[85%] md:max-w-[78%] rounded-2xl p-4 md:p-5 shadow-xs transition-all ${
                         isUser
-                          ? 'bg-gradient-to-r from-[#1E293B] to-[#111B35] text-white border border-[#35D7FF]/20 rounded-tr-sm'
-                          : 'bg-[#111B35]/85 text-[#F5F7FF] border border-[#35D7FF]/15 backdrop-blur-md rounded-tl-sm'
+                          ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-tr-sm shadow-sm'
+                          : 'bg-white text-slate-900 border border-slate-200/90 rounded-tl-sm shadow-sm'
                       }`}
                     >
                       {/* Attached files preview */}
@@ -305,7 +310,7 @@ export const ChatWorkspace: React.FC<ChatWorkspaceProps> = ({
                           {msg.attachments.map((att, i) => (
                             <div
                               key={i}
-                              className="rounded-xl overflow-hidden border border-[#35D7FF]/20 bg-[#080D1B]/80 max-w-[200px]"
+                              className="rounded-xl overflow-hidden border border-slate-200 bg-slate-50 max-w-[200px]"
                             >
                               {att.type === 'image' ? (
                                 <img
@@ -314,11 +319,11 @@ export const ChatWorkspace: React.FC<ChatWorkspaceProps> = ({
                                   className="w-full max-h-36 object-cover"
                                 />
                               ) : (
-                                <div className="p-2 flex items-center gap-2 text-xs">
+                                <div className="p-2 flex items-center gap-2 text-xs text-slate-700">
                                   {att.type === 'audio' ? (
-                                    <FileAudio className="w-4 h-4 text-[#35D7FF]" />
+                                    <FileAudio className="w-4 h-4 text-blue-600" />
                                   ) : (
-                                    <FileText className="w-4 h-4 text-[#8B5CF6]" />
+                                    <FileText className="w-4 h-4 text-violet-600" />
                                   )}
                                   <span className="truncate max-w-[120px]">{att.name}</span>
                                 </div>
@@ -330,8 +335,8 @@ export const ChatWorkspace: React.FC<ChatWorkspaceProps> = ({
 
                       {/* Web Search Queries (if Grounded) */}
                       {msg.webSearchQueries && msg.webSearchQueries.length > 0 && (
-                        <div className="mb-3 p-2.5 rounded-xl bg-[#080D1B]/60 border border-[#35D7FF]/20 text-xs">
-                          <div className="flex items-center gap-1.5 text-[#35D7FF] font-semibold mb-1">
+                        <div className="mb-3 p-2.5 rounded-xl bg-blue-50/70 border border-blue-200 text-xs">
+                          <div className="flex items-center gap-1.5 text-blue-700 font-semibold mb-1">
                             <Globe className="w-3.5 h-3.5" />
                             <span>Grounded with Google Search:</span>
                           </div>
@@ -339,7 +344,7 @@ export const ChatWorkspace: React.FC<ChatWorkspaceProps> = ({
                             {msg.webSearchQueries.map((q, idx) => (
                               <span
                                 key={idx}
-                                className="text-[11px] px-2 py-0.5 rounded-md bg-[#111B35] text-[#98A3B8]"
+                                className="text-[11px] px-2 py-0.5 rounded-md bg-white border border-blue-200 text-slate-700"
                               >
                                 &ldquo;{q}&rdquo;
                               </span>
@@ -355,9 +360,9 @@ export const ChatWorkspace: React.FC<ChatWorkspaceProps> = ({
 
                       {/* Source Citations */}
                       {msg.sources && msg.sources.length > 0 && (
-                        <div className="mt-4 pt-3 border-t border-[#35D7FF]/10">
-                          <div className="text-xs font-bold text-[#98A3B8] mb-2 flex items-center gap-1.5">
-                            <Globe className="w-3 h-3 text-[#35D7FF]" />
+                        <div className="mt-4 pt-3 border-t border-slate-100">
+                          <div className="text-xs font-bold text-slate-500 mb-2 flex items-center gap-1.5">
+                            <Globe className="w-3 h-3 text-blue-600" />
                             <span>Sources & Verified Citations:</span>
                           </div>
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -367,7 +372,7 @@ export const ChatWorkspace: React.FC<ChatWorkspaceProps> = ({
                                 href={src.url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center justify-between p-2 rounded-lg bg-[#080D1B]/60 border border-white/5 hover:border-[#35D7FF]/30 text-xs text-[#35D7FF] group transition-all"
+                                className="flex items-center justify-between p-2 rounded-lg bg-slate-50 border border-slate-200 hover:border-blue-400 text-xs text-blue-600 group transition-all"
                               >
                                 <span className="truncate max-w-[90%] font-medium group-hover:underline">
                                   {src.title || src.url}
@@ -380,18 +385,20 @@ export const ChatWorkspace: React.FC<ChatWorkspaceProps> = ({
                       )}
 
                       {/* Action Bar (Copy, Voice, Regenerate, Timestamp) */}
-                      <div className="mt-3 pt-2 flex items-center justify-between text-[11px] text-[#98A3B8]/70 border-t border-white/5">
+                      <div className={`mt-3 pt-2 flex items-center justify-between text-[11px] border-t ${
+                        isUser ? 'border-white/20 text-white/80' : 'border-slate-100 text-slate-500'
+                      }`}>
                         <div className="flex items-center gap-3">
                           {/* Copy Button */}
                           <button
                             onClick={() => handleCopy(msg.id, msg.text)}
                             title="Copy message"
-                            className="flex items-center gap-1 hover:text-white transition-colors"
+                            className="flex items-center gap-1 hover:text-blue-600 transition-colors"
                           >
                             {copiedId === msg.id ? (
                               <>
-                                <Check className="w-3 h-3 text-emerald-400" />
-                                <span className="text-emerald-400">Copied</span>
+                                <Check className="w-3 h-3 text-emerald-500" />
+                                <span className="text-emerald-600 font-semibold">Copied</span>
                               </>
                             ) : (
                               <>
@@ -411,7 +418,7 @@ export const ChatWorkspace: React.FC<ChatWorkspaceProps> = ({
                                   onSpeakText(msg.text);
                                 }
                               }}
-                              className="flex items-center gap-1 hover:text-[#35D7FF] transition-colors"
+                              className="flex items-center gap-1 hover:text-blue-600 transition-colors"
                               title="Listen to response"
                             >
                               <Volume2 className="w-3 h-3" />
@@ -424,7 +431,7 @@ export const ChatWorkspace: React.FC<ChatWorkspaceProps> = ({
                             <button
                               onClick={onRegenerateResponse}
                               disabled={isLoading}
-                              className="flex items-center gap-1 hover:text-[#8B5CF6] transition-colors disabled:opacity-40"
+                              className="flex items-center gap-1 hover:text-violet-600 transition-colors disabled:opacity-40"
                               title="Regenerate this response"
                             >
                               <RotateCcw className="w-3 h-3" />
@@ -435,7 +442,7 @@ export const ChatWorkspace: React.FC<ChatWorkspaceProps> = ({
 
                         {/* Model & Time */}
                         <div className="flex items-center gap-2">
-                          {msg.modelUsed && <span>{msg.modelUsed}</span>}
+                          {msg.modelUsed && <span className="font-mono text-[10px]">{msg.modelUsed}</span>}
                           <span>
                             {new Date(msg.timestamp).toLocaleTimeString([], {
                               hour: '2-digit',
@@ -448,7 +455,7 @@ export const ChatWorkspace: React.FC<ChatWorkspaceProps> = ({
 
                     {/* User Profile Initial */}
                     {isUser && (
-                      <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center font-bold text-xs text-white shrink-0 mt-1">
+                      <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center font-bold text-xs text-white shrink-0 mt-1 shadow-xs">
                         U
                       </div>
                     )}
@@ -458,11 +465,11 @@ export const ChatWorkspace: React.FC<ChatWorkspaceProps> = ({
 
               {/* Streaming / Loading Indicator */}
               {isLoading && (
-                <div className="flex gap-3 items-center text-xs text-[#35D7FF] animate-pulse">
-                  <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#35D7FF] to-[#8B5CF6] flex items-center justify-center">
-                    <Sparkles className="w-3.5 h-3.5 text-[#080D1B]" />
+                <div className="flex gap-3 items-center text-xs text-blue-600 animate-pulse">
+                  <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white">
+                    <Sparkles className="w-3.5 h-3.5" />
                   </div>
-                  <span>STAR AI is synthesizing response...</span>
+                  <span className="font-medium">STAR AI is synthesizing response...</span>
                 </div>
               )}
 
@@ -472,20 +479,69 @@ export const ChatWorkspace: React.FC<ChatWorkspaceProps> = ({
         </div>
 
         {/* Composer Input Area */}
-        <div className="p-4 border-t border-[#35D7FF]/10 bg-[#080D1B]/95 backdrop-blur-lg">
+        <div className="p-4 border-t border-slate-200 bg-white/95 backdrop-blur-lg">
           <div className="max-w-4xl mx-auto">
+            {/* Quick Context Chips Bar: Level & Language Indicators */}
+            <div className="flex items-center justify-between mb-2 px-1 text-xs text-slate-500">
+              <div className="flex items-center gap-2">
+                {onSelectExplanationLevel && (
+                  <div className="flex items-center gap-1">
+                    <BookOpen className="w-3 h-3 text-blue-600" />
+                    <span className="font-semibold text-slate-700">Level:</span>
+                    <select
+                      value={explanationLevel}
+                      onChange={(e) => onSelectExplanationLevel(e.target.value as any)}
+                      className="bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-800 text-[11px] rounded-lg px-2 py-0.5 outline-none cursor-pointer"
+                    >
+                      <option value="basic">Basic English</option>
+                      <option value="normal">Normal English</option>
+                      <option value="advanced">Advanced English</option>
+                    </select>
+                  </div>
+                )}
+
+                {onSelectLanguage && (
+                  <div className="flex items-center gap-1">
+                    <Languages className="w-3 h-3 text-violet-600" />
+                    <span className="font-semibold text-slate-700">Language:</span>
+                    <select
+                      value={preferredLanguage}
+                      onChange={(e) => onSelectLanguage(e.target.value)}
+                      className="bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-800 text-[11px] rounded-lg px-2 py-0.5 outline-none cursor-pointer"
+                    >
+                      <option value="en">English</option>
+                      <option value="ta">தமிழ் (Tamil)</option>
+                      <option value="hi">हिन्दी (Hindi)</option>
+                      <option value="es">Español</option>
+                      <option value="fr">Français</option>
+                      <option value="de">Deutsch</option>
+                    </select>
+                  </div>
+                )}
+              </div>
+
+              {onClearConversation && messages.length > 0 && (
+                <button
+                  onClick={onClearConversation}
+                  className="text-slate-400 hover:text-red-500 text-[11px] transition-colors"
+                >
+                  Clear Chat
+                </button>
+              )}
+            </div>
+
             {/* Attachment Chips Bar */}
             {attachments.length > 0 && (
-              <div className="flex flex-wrap gap-2 mb-2 p-2 rounded-xl bg-[#111B35]/80 border border-[#35D7FF]/20">
+              <div className="flex flex-wrap gap-2 mb-2 p-2 rounded-xl bg-slate-50 border border-slate-200">
                 {attachments.map((att, idx) => (
                   <div
                     key={idx}
-                    className="flex items-center gap-2 px-2.5 py-1 rounded-lg bg-[#080D1B] text-xs text-white border border-[#35D7FF]/20"
+                    className="flex items-center gap-2 px-2.5 py-1 rounded-lg bg-white text-xs text-slate-800 border border-slate-200 shadow-xs"
                   >
                     <span className="truncate max-w-[140px]">{att.name}</span>
                     <button
                       onClick={() => handleRemoveAttachment(idx)}
-                      className="text-[#98A3B8] hover:text-red-400"
+                      className="text-slate-400 hover:text-red-500"
                     >
                       <X className="w-3.5 h-3.5" />
                     </button>
@@ -495,18 +551,18 @@ export const ChatWorkspace: React.FC<ChatWorkspaceProps> = ({
             )}
 
             {/* Input Box */}
-            <div className="relative flex flex-col rounded-2xl bg-[#111B35]/90 border border-[#35D7FF]/20 focus-within:border-[#35D7FF]/60 shadow-xl shadow-[#080D1B] transition-all">
+            <div className="relative flex flex-col rounded-2xl bg-white border border-slate-300 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 shadow-sm transition-all">
               <textarea
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="Ask STAR AI anything, code something, analyze documents, or speak..."
                 rows={1}
-                className="w-full bg-transparent px-4 py-3.5 text-sm md:text-base text-[#F5F7FF] placeholder-[#98A3B8]/60 focus:outline-none resize-none min-h-[52px] max-h-40"
+                className="w-full bg-transparent px-4 py-3.5 text-sm md:text-base text-slate-900 placeholder-slate-400 focus:outline-none resize-none min-h-[52px] max-h-40"
               />
 
               {/* Bottom Tools Toolbar */}
-              <div className="flex items-center justify-between px-3 pb-2 pt-1 border-t border-white/5">
+              <div className="flex items-center justify-between px-3 pb-2 pt-1 border-t border-slate-100">
                 {/* Multimodal Attachment Tools */}
                 <div className="flex items-center gap-1">
                   {/* File Upload (Images, Docs, Audio) */}
@@ -521,7 +577,7 @@ export const ChatWorkspace: React.FC<ChatWorkspaceProps> = ({
                   <button
                     onClick={() => fileInputRef.current?.click()}
                     title="Attach image, audio, or document"
-                    className="p-2 rounded-lg text-[#98A3B8] hover:text-white hover:bg-white/5 transition-colors"
+                    className="p-2 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors"
                   >
                     <Paperclip className="w-4 h-4" />
                   </button>
@@ -530,7 +586,7 @@ export const ChatWorkspace: React.FC<ChatWorkspaceProps> = ({
                   <button
                     onClick={openCameraModal}
                     title="Take camera snapshot"
-                    className="p-2 rounded-lg text-[#98A3B8] hover:text-white hover:bg-white/5 transition-colors"
+                    className="p-2 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors"
                   >
                     <Camera className="w-4 h-4" />
                   </button>
@@ -539,7 +595,7 @@ export const ChatWorkspace: React.FC<ChatWorkspaceProps> = ({
                   <button
                     onClick={handleCaptureScreen}
                     title="Capture screen for AI troubleshooting"
-                    className="p-2 rounded-lg text-[#98A3B8] hover:text-white hover:bg-white/5 transition-colors"
+                    className="p-2 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors"
                   >
                     <Monitor className="w-4 h-4" />
                   </button>
@@ -548,10 +604,10 @@ export const ChatWorkspace: React.FC<ChatWorkspaceProps> = ({
                   <button
                     onClick={onToggleSearch}
                     title={enableSearch ? 'Web search enabled' : 'Web search disabled'}
-                    className={`flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-semibold transition-colors ${
+                    className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold transition-colors ${
                       enableSearch
-                        ? 'text-[#35D7FF] bg-[#35D7FF]/15'
-                        : 'text-[#98A3B8] hover:text-white'
+                        ? 'text-blue-700 bg-blue-100'
+                        : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100'
                     }`}
                   >
                     <Globe className="w-3.5 h-3.5" />
@@ -568,7 +624,7 @@ export const ChatWorkspace: React.FC<ChatWorkspaceProps> = ({
                     className={`p-2 rounded-xl transition-all ${
                       isListening
                         ? 'bg-rose-500 text-white animate-pulse shadow-md shadow-rose-500/30'
-                        : 'text-[#98A3B8] hover:text-[#35D7FF] hover:bg-white/5'
+                        : 'text-slate-500 hover:text-blue-600 hover:bg-slate-100'
                     }`}
                   >
                     {isListening ? <Mic className="w-4 h-4" /> : <MicOff className="w-4 h-4" />}
@@ -579,7 +635,7 @@ export const ChatWorkspace: React.FC<ChatWorkspaceProps> = ({
                     <button
                       onClick={onStopGeneration}
                       title="Stop generating response"
-                      className="flex items-center justify-center p-2 rounded-xl font-bold bg-rose-500/20 text-rose-400 border border-rose-500/40 hover:bg-rose-500/30 transition-all shadow-md shadow-rose-500/20 active:scale-95"
+                      className="flex items-center justify-center p-2 rounded-xl font-bold bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-100 transition-all shadow-xs active:scale-95"
                     >
                       <Square className="w-4 h-4 fill-current" />
                     </button>
@@ -589,8 +645,8 @@ export const ChatWorkspace: React.FC<ChatWorkspaceProps> = ({
                       disabled={!inputText.trim() && attachments.length === 0}
                       className={`flex items-center justify-center p-2 rounded-xl font-bold transition-all ${
                         !inputText.trim() && attachments.length === 0
-                          ? 'bg-white/5 text-[#98A3B8]/40 cursor-not-allowed'
-                          : 'bg-gradient-to-r from-[#35D7FF] to-[#8B5CF6] text-[#080D1B] shadow-md shadow-[#35D7FF]/30 hover:scale-105 active:scale-95'
+                          ? 'bg-slate-100 text-slate-300 cursor-not-allowed'
+                          : 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-xs hover:from-blue-700 hover:to-indigo-700 hover:scale-105 active:scale-95 cursor-pointer'
                       }`}
                     >
                       <Send className="w-4 h-4" />
@@ -600,7 +656,7 @@ export const ChatWorkspace: React.FC<ChatWorkspaceProps> = ({
               </div>
             </div>
 
-            <div className="mt-2 text-center text-[10px] text-[#98A3B8]/60">
+            <div className="mt-2 text-center text-[11px] text-slate-400">
               STAR AI utilizes grounded intelligence. Verify critical medical, financial, or legal decisions.
             </div>
           </div>
@@ -609,15 +665,15 @@ export const ChatWorkspace: React.FC<ChatWorkspaceProps> = ({
 
       {/* Optional Docked 3D Avatar Side Panel */}
       {showAvatarInChat && (
-        <div className="hidden xl:flex flex-col w-80 border-l border-[#35D7FF]/10 bg-[#080D1B]/95 p-4 items-center justify-between shrink-0">
-          <div className="w-full flex items-center justify-between pb-3 border-b border-[#35D7FF]/10">
-            <div className="flex items-center gap-2 text-xs font-bold text-[#35D7FF]">
+        <div className="hidden xl:flex flex-col w-80 border-l border-slate-200 bg-white p-4 items-center justify-between shrink-0 shadow-xs">
+          <div className="w-full flex items-center justify-between pb-3 border-b border-slate-100">
+            <div className="flex items-center gap-2 text-xs font-bold text-blue-600">
               <Sparkles className="w-3.5 h-3.5" />
               <span>STAR AVATAR LIVE</span>
             </div>
             <button
               onClick={onToggleAvatarInChat}
-              className="text-[#98A3B8] hover:text-white p-1"
+              className="text-slate-400 hover:text-slate-700 p-1"
               title="Close Avatar Widget"
             >
               <X className="w-4 h-4" />
@@ -648,23 +704,23 @@ export const ChatWorkspace: React.FC<ChatWorkspaceProps> = ({
             />
           </div>
 
-          <div className="w-full p-3 rounded-xl bg-[#111B35]/60 border border-[#35D7FF]/10 text-xs text-[#98A3B8] text-center">
-            <p className="font-semibold text-white">Interactive Digital Human</p>
-            <p className="text-[11px] mt-0.5">Procedural lip-sync & expression synthesis</p>
+          <div className="w-full p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600 text-center">
+            <p className="font-semibold text-slate-900">Interactive Digital Human</p>
+            <p className="text-[11px] mt-0.5 text-slate-500">Procedural lip-sync & expression synthesis</p>
           </div>
         </div>
       )}
 
       {/* Live Camera Snapshot Modal */}
       {showCameraModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
-          <div className="bg-[#111B35] border border-[#35D7FF]/30 rounded-2xl p-4 max-w-lg w-full shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-white border border-slate-200 rounded-2xl p-4 max-w-lg w-full shadow-2xl">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                <Camera className="w-4 h-4 text-[#35D7FF]" />
+              <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                <Camera className="w-4 h-4 text-blue-600" />
                 <span>Capture Camera Snapshot</span>
               </h3>
-              <button onClick={closeCameraModal} className="text-[#98A3B8] hover:text-white">
+              <button onClick={closeCameraModal} className="text-slate-400 hover:text-slate-700">
                 <X className="w-4 h-4" />
               </button>
             </div>
@@ -674,13 +730,13 @@ export const ChatWorkspace: React.FC<ChatWorkspaceProps> = ({
             <div className="flex items-center justify-end gap-2 mt-4">
               <button
                 onClick={closeCameraModal}
-                className="px-3 py-1.5 rounded-lg text-xs font-semibold text-[#98A3B8] hover:text-white"
+                className="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900"
               >
                 Cancel
               </button>
               <button
                 onClick={captureCameraSnapshot}
-                className="px-4 py-2 rounded-xl text-xs font-bold bg-[#35D7FF] text-[#080D1B] hover:brightness-110"
+                className="px-4 py-2 rounded-xl text-xs font-bold bg-blue-600 text-white hover:bg-blue-700 shadow-xs"
               >
                 Capture Snapshot
               </button>
@@ -692,7 +748,7 @@ export const ChatWorkspace: React.FC<ChatWorkspaceProps> = ({
   );
 };
 
-// Helper for lightweight Markdown formatting (headings, code blocks, bold, lists)
+// Helper for clean Markdown formatting (headings, code blocks, bold, lists)
 function renderFormattedText(content: string) {
   const parts = content.split(/(```[\s\S]*?```)/g);
 
@@ -703,25 +759,25 @@ function renderFormattedText(content: string) {
       const code = part.slice(firstLineBreak + 1, -3);
 
       return (
-        <div key={index} className="my-3 rounded-xl overflow-hidden border border-[#35D7FF]/20 bg-[#0B1124]">
-          <div className="flex items-center justify-between px-3 py-1.5 bg-[#111B35]/70 border-b border-white/5 text-xs text-[#35D7FF] font-mono">
+        <div key={index} className="my-3 rounded-xl overflow-hidden border border-slate-700 bg-slate-900 shadow-sm">
+          <div className="flex items-center justify-between px-3 py-1.5 bg-slate-800 border-b border-slate-700 text-xs text-blue-400 font-mono">
             <span>{lang}</span>
             <button
               onClick={() => navigator.clipboard.writeText(code)}
-              className="flex items-center gap-1 text-[#98A3B8] hover:text-white text-[11px]"
+              className="flex items-center gap-1 text-slate-300 hover:text-white text-[11px]"
             >
               <Copy className="w-3 h-3" />
               <span>Copy code</span>
             </button>
           </div>
-          <pre className="p-3 overflow-x-auto text-xs font-mono text-emerald-300">
+          <pre className="p-3 overflow-x-auto text-xs font-mono text-emerald-400">
             <code>{code}</code>
           </pre>
         </div>
       );
     }
 
-    // Basic inline code & styling
+    // Basic inline formatting
     return <span key={index}>{part}</span>;
   });
 }

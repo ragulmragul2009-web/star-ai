@@ -46,6 +46,8 @@ export default function App() {
   // Model & Search Grounding
   const [selectedModel, setSelectedModel] = useState('gemini-3.1-flash-lite');
   const [enableSearch, setEnableSearch] = useState(false);
+  const [explanationLevel, setExplanationLevel] = useState<'basic' | 'normal' | 'advanced'>('normal');
+  const [preferredLanguage, setPreferredLanguage] = useState('en');
 
   // Avatar Configuration & State
   const [avatarStyle, setAvatarStyle] = useState<AvatarStyle>('3d-human');
@@ -290,6 +292,8 @@ export default function App() {
         model: selectedModel,
         enableSearch,
         attachments,
+        explanationLevel,
+        preferredLanguage,
         signal: controller.signal,
       });
 
@@ -388,6 +392,8 @@ export default function App() {
         model: selectedModel,
         enableSearch,
         attachments: lastUserMsg.attachments || [],
+        explanationLevel,
+        preferredLanguage,
         signal: controller.signal,
       });
 
@@ -493,11 +499,11 @@ export default function App() {
   };
 
   return (
-    <div className="flex h-screen w-screen overflow-hidden bg-[#080D1B] text-[#F5F7FF] font-['Plus_Jakarta_Sans',sans-serif]">
-      {/* Background Subtle Starfield Canvas Effect */}
+    <div className="flex h-screen w-screen overflow-hidden bg-slate-50 text-slate-900 font-['Plus_Jakarta_Sans',sans-serif]">
+      {/* Background Subtle Ambient Effect */}
       <div className="absolute inset-0 pointer-events-none opacity-40 z-0">
-        <div className="absolute top-1/4 left-1/3 w-96 h-96 bg-[#35D7FF]/10 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-1/3 right-1/4 w-96 h-96 bg-[#8B5CF6]/10 rounded-full blur-3xl animate-pulse [animation-delay:2s]" />
+        <div className="absolute top-1/4 left-1/3 w-96 h-96 bg-blue-100/60 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-1/3 right-1/4 w-96 h-96 bg-indigo-100/60 rounded-full blur-3xl animate-pulse [animation-delay:2s]" />
       </div>
 
       {/* Main Sidebar Navigation */}
@@ -530,7 +536,7 @@ export default function App() {
       {mobileSidebarOpen && (
         <div
           onClick={() => setMobileSidebarOpen(false)}
-          className="fixed inset-0 z-40 bg-black/70 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-40 bg-black/40 backdrop-blur-xs lg:hidden"
         />
       )}
 
@@ -541,6 +547,10 @@ export default function App() {
           currentWorkspace={currentWorkspace}
           selectedModel={selectedModel}
           onSelectModel={setSelectedModel}
+          explanationLevel={explanationLevel}
+          onSelectExplanationLevel={setExplanationLevel}
+          preferredLanguage={preferredLanguage}
+          onSelectLanguage={setPreferredLanguage}
           enableSearch={enableSearch}
           onToggleSearch={() => setEnableSearch(!enableSearch)}
           voiceEnabled={voiceEnabled}
@@ -577,6 +587,10 @@ export default function App() {
               enableSearch={enableSearch}
               onToggleSearch={() => setEnableSearch(!enableSearch)}
               selectedModel={selectedModel}
+              explanationLevel={explanationLevel}
+              onSelectExplanationLevel={setExplanationLevel}
+              preferredLanguage={preferredLanguage}
+              onSelectLanguage={setPreferredLanguage}
               onStopGeneration={handleStopGeneration}
               onRegenerateResponse={handleRegenerateResponse}
               onClearConversation={handleClearConversation}
@@ -629,7 +643,12 @@ export default function App() {
 
           {currentWorkspace === 'support' && <SupportWorkspace />}
 
-          {currentWorkspace === 'admin' && <AdminWorkspace />}
+          {currentWorkspace === 'admin' && (
+            <AdminWorkspace
+              currentUserRole={currentUser.role}
+              onOpenAuth={() => setAuthOpen(true)}
+            />
+          )}
         </main>
       </div>
 

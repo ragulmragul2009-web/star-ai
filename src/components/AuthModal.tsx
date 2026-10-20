@@ -56,17 +56,17 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
-      <div className="bg-[#111B35] border border-[#35D7FF]/30 rounded-3xl max-w-md w-full shadow-2xl overflow-hidden flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
+      <div className="bg-white border border-slate-200 rounded-2xl max-w-md w-full shadow-2xl overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="p-4 border-b border-[#35D7FF]/15 flex items-center justify-between bg-[#080D1B]">
+        <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-white">
           <div className="flex items-center gap-2">
-            <User className="w-4 h-4 text-[#35D7FF]" />
-            <h3 className="text-base font-extrabold text-white">
+            <User className="w-4 h-4 text-blue-600" />
+            <h3 className="text-base font-extrabold text-slate-900">
               {mode === 'profile' ? 'User Profile & Identity' : 'Account Authentication'}
             </h3>
           </div>
-          <button onClick={onClose} className="p-1 text-[#98A3B8] hover:text-white">
+          <button onClick={onClose} className="p-1 text-slate-400 hover:text-slate-700">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -75,30 +75,30 @@ export const AuthModal: React.FC<AuthModalProps> = ({
         <div className="p-6 space-y-5">
           {mode === 'profile' && (
             <form onSubmit={handleSaveProfile} className="space-y-4">
-              <div className="flex items-center gap-4 p-3 rounded-2xl bg-[#080D1B] border border-[#35D7FF]/20">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-[#35D7FF] to-[#8B5CF6] flex items-center justify-center text-[#080D1B] font-extrabold text-lg">
+              <div className="flex items-center gap-4 p-3 rounded-2xl bg-slate-50 border border-slate-200">
+                <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white font-extrabold text-lg shadow-xs">
                   {name.charAt(0).toUpperCase()}
                 </div>
                 <div>
-                  <div className="font-bold text-white text-sm">{name}</div>
-                  <div className="text-xs text-[#35D7FF] capitalize">{selectedRole} Account</div>
-                  <div className="text-[10px] text-[#98A3B8]">{currentUser.email}</div>
+                  <div className="font-bold text-slate-900 text-sm">{name}</div>
+                  <div className="text-xs text-blue-600 font-semibold capitalize">{selectedRole} Account</div>
+                  <div className="text-[10px] text-slate-500">{currentUser.email}</div>
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-[#98A3B8]">Display Name:</label>
+                <label className="text-xs font-semibold text-slate-600">Display Name:</label>
                 <input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full bg-[#080D1B] border border-[#35D7FF]/20 rounded-xl px-4 py-2 text-xs text-white placeholder-[#98A3B8]/50 focus:outline-none focus:border-[#35D7FF]"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:bg-white transition-colors"
                 />
               </div>
 
               {/* Role Selection */}
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-[#98A3B8]">Active Role Persona:</label>
+                <label className="text-xs font-semibold text-slate-600">Active Role Persona:</label>
                 <div className="grid grid-cols-2 gap-2">
                   {[
                     { id: 'user' as const, label: 'Explorer User' },
@@ -110,10 +110,10 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                       key={r.id}
                       type="button"
                       onClick={() => handleQuickRoleSwitch(r.id)}
-                      className={`p-2 rounded-xl text-xs font-medium border text-left transition-all ${
+                      className={`p-2.5 rounded-xl text-xs font-medium border text-left transition-all cursor-pointer ${
                         selectedRole === r.id
-                          ? 'bg-[#35D7FF]/20 border-[#35D7FF] text-white font-bold'
-                          : 'bg-[#080D1B] border-white/5 text-[#98A3B8] hover:text-white'
+                          ? 'bg-blue-50 border-blue-400 text-blue-700 font-bold shadow-xs'
+                          : 'bg-slate-50 border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                       }`}
                     >
                       {r.label}
@@ -131,7 +131,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   setSuccessNotice(true);
                   setTimeout(() => setSuccessNotice(false), 1500);
                 }}
-                className="w-full py-2.5 rounded-xl bg-white text-slate-900 font-bold text-xs hover:bg-slate-100 flex items-center justify-center gap-2 transition-all"
+                className="w-full py-2.5 rounded-xl bg-white border border-slate-300 text-slate-800 font-bold text-xs hover:bg-slate-50 flex items-center justify-center gap-2 transition-all shadow-xs cursor-pointer"
               >
                 <svg className="w-4 h-4" viewBox="0 0 24 24">
                   <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -144,7 +144,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
               <button
                 type="submit"
-                className="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#35D7FF] to-[#8B5CF6] text-[#080D1B] font-bold text-xs hover:brightness-110 active:scale-95 transition-all"
+                className="w-full py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold text-xs hover:from-blue-700 hover:to-indigo-700 active:scale-95 transition-all shadow-xs cursor-pointer"
               >
                 {successNotice ? 'Profile Updated!' : 'Save Profile Changes'}
               </button>

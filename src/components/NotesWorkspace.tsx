@@ -11,8 +11,6 @@ import {
   Copy,
   Check,
   Search,
-  Folder,
-  Tag,
   CheckCircle2,
   RotateCw
 } from 'lucide-react';
@@ -51,7 +49,6 @@ export const NotesWorkspace: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [saveStatus, setSaveStatus] = useState<'saved' | 'saving'>('saved');
   const [aiLoading, setAiLoading] = useState(false);
-  const [copied, setCopied] = useState(false);
 
   const activeNote = notes.find((n) => n.id === activeNoteId) || notes[0];
 
@@ -114,7 +111,7 @@ export const NotesWorkspace: React.FC = () => {
       if (data.text) {
         handleUpdateNote('content', activeNote.content + '\n\n---\n\n' + data.text);
       }
-    } catch (err) {
+    } catch {
       alert('AI note action failed. Please check connection.');
     } finally {
       setAiLoading(false);
@@ -139,17 +136,17 @@ export const NotesWorkspace: React.FC = () => {
   );
 
   return (
-    <div className="flex-1 flex h-full bg-[#080D1B] overflow-hidden">
+    <div className="flex-1 flex h-full bg-slate-50 overflow-hidden">
       {/* Left Notes List Sidebar */}
-      <div className="w-72 border-r border-[#35D7FF]/10 bg-[#080D1B]/95 flex flex-col shrink-0">
-        <div className="p-3 border-b border-[#35D7FF]/10 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-xs font-bold text-white">
-            <FileText className="w-4 h-4 text-[#35D7FF]" />
+      <div className="w-72 border-r border-slate-200 bg-white flex flex-col shrink-0 shadow-xs">
+        <div className="p-3 border-b border-slate-200 flex items-center justify-between">
+          <div className="flex items-center gap-2 text-xs font-bold text-slate-900">
+            <FileText className="w-4 h-4 text-blue-600" />
             <span>STAR Notes</span>
           </div>
           <button
             onClick={handleCreateNote}
-            className="p-1.5 rounded-lg bg-[#35D7FF] text-[#080D1B] font-bold hover:brightness-110 transition-all"
+            className="p-1.5 rounded-lg bg-blue-600 text-white font-bold hover:bg-blue-700 shadow-xs transition-all cursor-pointer"
             title="New Note"
           >
             <Plus className="w-3.5 h-3.5" />
@@ -157,15 +154,15 @@ export const NotesWorkspace: React.FC = () => {
         </div>
 
         {/* Search Bar */}
-        <div className="p-2 border-b border-white/5">
+        <div className="p-2 border-b border-slate-100">
           <div className="relative">
-            <Search className="absolute left-2.5 top-2 w-3.5 h-3.5 text-[#98A3B8]/60" />
+            <Search className="absolute left-2.5 top-2 w-3.5 h-3.5 text-slate-400" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search notes..."
-              className="w-full bg-[#111B35]/70 border border-[#35D7FF]/10 rounded-lg pl-8 pr-2 py-1.5 text-xs text-white placeholder-[#98A3B8]/50 focus:outline-none focus:border-[#35D7FF]/40"
+              className="w-full bg-slate-50 border border-slate-200 rounded-lg pl-8 pr-2 py-1.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:bg-white"
             />
           </div>
         </div>
@@ -180,13 +177,13 @@ export const NotesWorkspace: React.FC = () => {
                 onClick={() => setActiveNoteId(note.id)}
                 className={`group p-2.5 rounded-xl text-left cursor-pointer transition-all ${
                   isSelected
-                    ? 'bg-[#111B35] text-white border border-[#35D7FF]/30 shadow-md'
-                    : 'text-[#98A3B8] hover:text-white hover:bg-white/5'
+                    ? 'bg-blue-50 text-blue-900 border border-blue-200 shadow-xs font-medium'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                 }`}
               >
                 <div className="flex items-center justify-between text-xs font-semibold mb-1">
                   <div className="flex items-center gap-1.5 truncate">
-                    {note.pinned && <Pin className="w-3 h-3 text-[#35D7FF] shrink-0" />}
+                    {note.pinned && <Pin className="w-3 h-3 text-blue-600 shrink-0" />}
                     <span className="truncate">{note.title || 'Untitled'}</span>
                   </div>
                   <div className="hidden group-hover:flex items-center gap-1 shrink-0 ml-1">
@@ -195,7 +192,7 @@ export const NotesWorkspace: React.FC = () => {
                         e.stopPropagation();
                         handleTogglePin(note.id);
                       }}
-                      className="p-0.5 hover:text-[#35D7FF]"
+                      className="p-0.5 hover:text-blue-600"
                       title={note.pinned ? 'Unpin' : 'Pin'}
                     >
                       <Pin className="w-3 h-3" />
@@ -205,14 +202,14 @@ export const NotesWorkspace: React.FC = () => {
                         e.stopPropagation();
                         handleDeleteNote(note.id);
                       }}
-                      className="p-0.5 hover:text-red-400"
+                      className="p-0.5 hover:text-red-500"
                       title="Delete"
                     >
                       <Trash2 className="w-3 h-3" />
                     </button>
                   </div>
                 </div>
-                <p className="text-[11px] text-[#98A3B8]/70 line-clamp-2">
+                <p className="text-[11px] text-slate-500 line-clamp-2">
                   {note.content ? note.content.replace(/#+/g, '').trim() : 'Empty note'}
                 </p>
               </div>
@@ -223,46 +220,46 @@ export const NotesWorkspace: React.FC = () => {
 
       {/* Main Note Editor */}
       {activeNote ? (
-        <div className="flex-1 flex flex-col h-full overflow-hidden bg-[#0A1024]">
+        <div className="flex-1 flex flex-col h-full overflow-hidden bg-white">
           {/* Editor Header */}
-          <div className="p-4 border-b border-[#35D7FF]/10 bg-[#080D1B]/80 flex flex-wrap items-center justify-between gap-3 shrink-0">
+          <div className="p-4 border-b border-slate-200 bg-white flex flex-wrap items-center justify-between gap-3 shrink-0 shadow-xs">
             <div className="flex items-center gap-3 flex-1 min-w-[200px]">
               <input
                 type="text"
                 value={activeNote.title}
                 onChange={(e) => handleUpdateNote('title', e.target.value)}
                 placeholder="Note Title..."
-                className="text-lg md:text-xl font-extrabold text-white bg-transparent outline-none w-full border-b border-transparent focus:border-[#35D7FF]/40"
+                className="text-lg md:text-xl font-extrabold text-slate-900 bg-transparent outline-none w-full border-b border-transparent focus:border-blue-500"
               />
             </div>
 
             {/* Status & Actions */}
             <div className="flex items-center gap-2 text-xs">
-              <span className="text-[11px] text-[#35D7FF] font-medium flex items-center gap-1">
-                <CheckCircle2 className="w-3 h-3 text-emerald-400" />
-                <span>{saveStatus === 'saving' ? 'Saving...' : 'Saved'}</span>
+              <span className="text-[11px] text-slate-500 font-medium flex items-center gap-1">
+                <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                <span>{saveStatus === 'saving' ? 'Saving...' : 'Saved locally'}</span>
               </span>
 
               {/* AI Assistant Menu */}
-              <div className="flex items-center gap-1 bg-[#111B35] p-1 rounded-xl border border-[#35D7FF]/20">
+              <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200">
                 <button
                   onClick={() => handleAiAction('summarize')}
                   disabled={aiLoading}
-                  className="px-2.5 py-1 rounded-lg text-[#98A3B8] hover:text-[#35D7FF] font-semibold text-[11px] transition-colors"
+                  className="px-2.5 py-1 rounded-lg text-slate-700 hover:text-blue-700 font-semibold text-[11px] transition-colors cursor-pointer"
                 >
                   AI Summarize
                 </button>
                 <button
                   onClick={() => handleAiAction('expand')}
                   disabled={aiLoading}
-                  className="px-2.5 py-1 rounded-lg text-[#98A3B8] hover:text-[#8B5CF6] font-semibold text-[11px] transition-colors"
+                  className="px-2.5 py-1 rounded-lg text-slate-700 hover:text-violet-700 font-semibold text-[11px] transition-colors cursor-pointer"
                 >
                   AI Expand
                 </button>
                 <button
                   onClick={() => handleAiAction('fix_grammar')}
                   disabled={aiLoading}
-                  className="px-2.5 py-1 rounded-lg text-[#98A3B8] hover:text-white font-semibold text-[11px] transition-colors"
+                  className="px-2.5 py-1 rounded-lg text-slate-700 hover:text-slate-900 font-semibold text-[11px] transition-colors cursor-pointer"
                 >
                   Polish
                 </button>
@@ -271,7 +268,7 @@ export const NotesWorkspace: React.FC = () => {
               {/* Export */}
               <button
                 onClick={() => handleExport('markdown')}
-                className="p-1.5 rounded-lg bg-[#111B35] border border-white/10 text-[#98A3B8] hover:text-white"
+                className="p-1.5 rounded-lg bg-slate-100 border border-slate-200 text-slate-600 hover:text-slate-900 cursor-pointer"
                 title="Download as Markdown"
               >
                 <Download className="w-4 h-4" />
@@ -285,12 +282,12 @@ export const NotesWorkspace: React.FC = () => {
               value={activeNote.content}
               onChange={(e) => handleUpdateNote('content', e.target.value)}
               placeholder="Start drafting your document in Markdown..."
-              className="w-full h-full bg-transparent text-sm md:text-base text-[#F5F7FF] placeholder-[#98A3B8]/40 focus:outline-none resize-none font-mono leading-relaxed"
+              className="w-full h-full bg-transparent text-sm md:text-base text-slate-800 placeholder-slate-400 focus:outline-none resize-none font-mono leading-relaxed"
             />
           </div>
         </div>
       ) : (
-        <div className="flex-1 flex items-center justify-center text-xs text-[#98A3B8]">
+        <div className="flex-1 flex items-center justify-center text-xs text-slate-500">
           Select or create a note to begin.
         </div>
       )}

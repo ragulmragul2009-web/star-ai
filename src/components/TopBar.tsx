@@ -1,5 +1,5 @@
 import React from 'react';
-import { WorkspaceId, AvatarState } from '../types';
+import { WorkspaceId } from '../types';
 import {
   Globe,
   Flame,
@@ -9,14 +9,19 @@ import {
   SlidersHorizontal,
   Bot,
   Zap,
-  Activity,
-  Menu
+  Menu,
+  BookOpen,
+  Languages
 } from 'lucide-react';
 
 interface TopBarProps {
   currentWorkspace: WorkspaceId;
   selectedModel: string;
   onSelectModel: (model: string) => void;
+  explanationLevel?: 'basic' | 'normal' | 'advanced';
+  onSelectExplanationLevel?: (lvl: 'basic' | 'normal' | 'advanced') => void;
+  preferredLanguage?: string;
+  onSelectLanguage?: (lang: string) => void;
   enableSearch: boolean;
   onToggleSearch: () => void;
   voiceEnabled: boolean;
@@ -34,6 +39,10 @@ export const TopBar: React.FC<TopBarProps> = ({
   currentWorkspace,
   selectedModel,
   onSelectModel,
+  explanationLevel = 'normal',
+  onSelectExplanationLevel,
+  preferredLanguage = 'en',
+  onSelectLanguage,
   enableSearch,
   onToggleSearch,
   voiceEnabled,
@@ -65,40 +74,79 @@ export const TopBar: React.FC<TopBarProps> = ({
   const currentMeta = workspaceMeta[currentWorkspace] || workspaceMeta.chat;
 
   return (
-    <header className="h-16 border-b border-[#35D7FF]/10 bg-[#080D1B]/80 backdrop-blur-md px-4 flex items-center justify-between shrink-0 z-10">
+    <header className="h-16 border-b border-slate-200 bg-white/95 backdrop-blur-md px-4 flex items-center justify-between shrink-0 z-10 shadow-xs">
       {/* Left: Mobile hamburger & Workspace title */}
       <div className="flex items-center gap-3">
         <button
           onClick={onToggleMobileSidebar}
-          className="lg:hidden p-2 rounded-lg text-[#98A3B8] hover:text-white hover:bg-white/5"
+          className="lg:hidden p-2 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100"
+          title="Open Menu"
         >
           <Menu className="w-5 h-5" />
         </button>
 
         <div>
-          <h1 className="text-sm md:text-base font-bold text-white flex items-center gap-2">
+          <h1 className="text-sm md:text-base font-bold text-slate-900 flex items-center gap-2">
             <span>{currentMeta.title}</span>
-            <span className="hidden sm:inline-block w-1.5 h-1.5 rounded-full bg-emerald-400" />
+            <span className="hidden sm:inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
           </h1>
-          <p className="text-[11px] text-[#98A3B8] hidden md:block">
+          <p className="text-[11px] text-slate-500 hidden md:block">
             {currentMeta.subtitle}
           </p>
         </div>
       </div>
 
       {/* Right Controls Bar */}
-      <div className="flex items-center gap-2 sm:gap-3">
+      <div className="flex items-center gap-2 sm:gap-2.5">
+        {/* Explanation Level Selector */}
+        {onSelectExplanationLevel && (
+          <div className="hidden sm:flex items-center gap-1 bg-slate-100 border border-slate-200 p-1 rounded-xl text-xs">
+            <BookOpen className="w-3.5 h-3.5 text-blue-600 ml-1.5" />
+            <select
+              value={explanationLevel}
+              onChange={(e) => onSelectExplanationLevel(e.target.value as any)}
+              className="bg-transparent text-xs font-semibold text-slate-700 outline-none cursor-pointer pr-1 py-0.5"
+              title="Explanation Level"
+            >
+              <option value="basic">Basic English</option>
+              <option value="normal">Normal English</option>
+              <option value="advanced">Advanced English</option>
+            </select>
+          </div>
+        )}
+
+        {/* Preferred Language Selector */}
+        {onSelectLanguage && (
+          <div className="hidden md:flex items-center gap-1 bg-slate-100 border border-slate-200 p-1 rounded-xl text-xs">
+            <Languages className="w-3.5 h-3.5 text-violet-600 ml-1.5" />
+            <select
+              value={preferredLanguage}
+              onChange={(e) => onSelectLanguage(e.target.value)}
+              className="bg-transparent text-xs font-semibold text-slate-700 outline-none cursor-pointer pr-1 py-0.5"
+              title="Preferred Language"
+            >
+              <option value="en">English</option>
+              <option value="ta">தமிழ் (Tamil)</option>
+              <option value="hi">हिन्दी (Hindi)</option>
+              <option value="es">Español</option>
+              <option value="fr">Français</option>
+              <option value="de">Deutsch</option>
+              <option value="ja">日本語</option>
+            </select>
+          </div>
+        )}
+
         {/* Model Switcher */}
-        <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-[#111B35] border border-[#35D7FF]/15 text-xs text-[#F5F7FF]">
-          <Zap className="w-3.5 h-3.5 text-[#35D7FF]" />
+        <div className="hidden xl:flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-xs text-slate-700">
+          <Zap className="w-3.5 h-3.5 text-blue-600" />
           <select
             value={selectedModel}
             onChange={(e) => onSelectModel(e.target.value)}
-            className="bg-transparent text-xs font-semibold text-[#F5F7FF] outline-none cursor-pointer pr-1"
+            className="bg-transparent text-xs font-semibold text-slate-800 outline-none cursor-pointer pr-1"
           >
-            <option value="gemini-3.1-flash-lite" className="bg-[#111B35]">STAR Lite 3.1 (Default)</option>
-            <option value="gemini-3.8-flash" className="bg-[#111B35]">STAR Flash 3.8</option>
-            <option value="gemini-4-argon" className="bg-[#111B35]">STAR Quantum Pro</option>
+            <option value="gemini-3.1-flash-lite">STAR Lite 3.1 (Default)</option>
+            <option value="gemini-3.8-flash">STAR Flash 3.8</option>
+            <option value="gemini-4-argon">STAR Quantum Pro</option>
           </select>
         </div>
 
@@ -106,13 +154,13 @@ export const TopBar: React.FC<TopBarProps> = ({
         <button
           onClick={onToggleSearch}
           title={enableSearch ? 'Web Search Grounding Active' : 'Enable Web Search Grounding'}
-          className={`flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-xs font-semibold transition-all ${
+          className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-semibold transition-all ${
             enableSearch
-              ? 'bg-[#35D7FF]/15 text-[#35D7FF] border border-[#35D7FF]/40 shadow-sm shadow-[#35D7FF]/20'
-              : 'bg-[#111B35] text-[#98A3B8] border border-white/5 hover:text-white'
+              ? 'bg-blue-50 text-blue-700 border border-blue-300 shadow-xs'
+              : 'bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200'
           }`}
         >
-          <Globe className={`w-3.5 h-3.5 ${enableSearch ? 'text-[#35D7FF]' : 'text-[#98A3B8]'}`} />
+          <Globe className={`w-3.5 h-3.5 ${enableSearch ? 'text-blue-600' : 'text-slate-500'}`} />
           <span className="hidden sm:inline">Web Grounding</span>
         </button>
 
@@ -121,13 +169,13 @@ export const TopBar: React.FC<TopBarProps> = ({
           <button
             onClick={onToggleAvatarInChat}
             title={showAvatarInChat ? 'Hide 3D Avatar' : 'Show 3D Avatar'}
-            className={`p-1.5 sm:px-2.5 sm:py-1 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all ${
+            className={`p-1.5 sm:px-2.5 sm:py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all ${
               showAvatarInChat
-                ? 'bg-[#8B5CF6]/20 text-[#8B5CF6] border border-[#8B5CF6]/40'
-                : 'bg-[#111B35] text-[#98A3B8] border border-white/5 hover:text-white'
+                ? 'bg-violet-50 text-violet-700 border border-violet-300 shadow-xs'
+                : 'bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200'
             }`}
           >
-            <Bot className="w-3.5 h-3.5" />
+            <Bot className="w-3.5 h-3.5 text-violet-600" />
             <span className="hidden sm:inline">Avatar</span>
           </button>
         )}
@@ -138,21 +186,21 @@ export const TopBar: React.FC<TopBarProps> = ({
           title={voiceEnabled ? 'Mute AI voice output' : 'Enable AI voice output'}
           className={`p-2 rounded-xl text-xs transition-colors ${
             voiceEnabled
-              ? 'bg-[#111B35] text-[#35D7FF] border border-[#35D7FF]/20'
-              : 'bg-[#111B35] text-[#98A3B8]/60 border border-white/5 hover:text-white'
+              ? 'bg-blue-50 text-blue-600 border border-blue-200'
+              : 'bg-slate-100 text-slate-400 border border-slate-200 hover:text-slate-700'
           }`}
         >
           {voiceEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
         </button>
 
         {/* Streak & Learning Points Display */}
-        <div className="hidden lg:flex items-center gap-2 px-2.5 py-1 rounded-xl bg-[#111B35]/70 border border-[#35D7FF]/10 text-xs text-[#F5F7FF]">
-          <div className="flex items-center gap-1 text-amber-400 font-bold" title="Daily Streak">
-            <Flame className="w-3.5 h-3.5 fill-amber-400" />
+        <div className="hidden lg:flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-xs">
+          <div className="flex items-center gap-1 text-amber-600 font-bold" title="Daily Streak">
+            <Flame className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
             <span>{streakDays}d</span>
           </div>
-          <span className="text-[#98A3B8]/40">·</span>
-          <span className="text-[#35D7FF] font-semibold" title="Learning Points">
+          <span className="text-slate-300">·</span>
+          <span className="text-blue-600 font-semibold" title="Learning Points">
             {learningPoints} pts
           </span>
         </div>
@@ -161,7 +209,7 @@ export const TopBar: React.FC<TopBarProps> = ({
         <button
           onClick={onOpenSettings}
           title="Open Settings"
-          className="p-2 rounded-xl bg-[#111B35] text-[#98A3B8] border border-white/5 hover:text-white hover:border-[#35D7FF]/30 transition-all"
+          className="p-2 rounded-xl bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200 hover:text-slate-900 transition-all"
         >
           <SlidersHorizontal className="w-4 h-4" />
         </button>
@@ -170,9 +218,9 @@ export const TopBar: React.FC<TopBarProps> = ({
         <button
           onClick={onOpenAuth}
           title="Account & Authentication"
-          className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#35D7FF] to-[#8B5CF6] p-[1.5px] hover:scale-105 transition-transform"
+          className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 p-[1.5px] hover:scale-105 transition-transform shadow-xs"
         >
-          <div className="w-full h-full rounded-full bg-[#080D1B] flex items-center justify-center text-[#35D7FF]">
+          <div className="w-full h-full rounded-full bg-white flex items-center justify-center text-blue-600">
             <User className="w-4 h-4" />
           </div>
         </button>

@@ -8,7 +8,6 @@ import {
   Ticket,
   Send,
   CheckCircle2,
-  AlertCircle,
   ChevronDown,
   ChevronUp,
   RotateCw
@@ -79,7 +78,7 @@ export const SupportWorkspace: React.FC = () => {
       setActiveTab('status');
       setSubject('');
       setMessage('');
-    } catch (err) {
+    } catch {
       alert('Failed to submit ticket. Please try again.');
     } finally {
       setIsLoading(false);
@@ -93,89 +92,98 @@ export const SupportWorkspace: React.FC = () => {
   );
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-[#080D1B] overflow-y-auto p-4 md:p-8">
+    <div className="flex-1 flex flex-col h-full bg-slate-50 overflow-y-auto p-4 md:p-8">
       <div className="max-w-4xl mx-auto w-full space-y-6">
         {/* Header */}
         <div className="text-center space-y-2">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#35D7FF]/10 border border-[#35D7FF]/20 text-xs font-bold text-[#35D7FF]">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-xs font-bold text-blue-600">
             <HelpCircle className="w-3.5 h-3.5" />
-            <span>STAR CUSTOMER CARE & HELP CENTER</span>
+            <span>STAR AI CUSTOMER CARE & SUPPORT</span>
           </div>
-          <h2 className="text-2xl md:text-3xl font-extrabold text-white">
-            How can our support team assist you?
+          <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900">
+            Knowledge Base, FAQs & Concierge Care
           </h2>
-          <p className="text-xs text-[#98A3B8]">
-            Search knowledge base, submit verified support tickets, or read troubleshooting guides.
+          <p className="text-xs text-slate-500 max-w-xl mx-auto">
+            Find immediate answers to technical questions, report feedback, or open an official ticket with the STAR AI Engineering Team.
           </p>
         </div>
 
-        {/* Tab switch */}
-        <div className="flex items-center justify-center gap-2 p-1 bg-[#111B35] rounded-xl max-w-md mx-auto border border-[#35D7FF]/20">
+        {/* Subtabs Header */}
+        <div className="flex items-center justify-center gap-1 border-b border-slate-200 pb-2">
           <button
             onClick={() => setActiveTab('faq')}
-            className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
               activeTab === 'faq'
-                ? 'bg-gradient-to-r from-[#35D7FF] to-[#8B5CF6] text-[#080D1B]'
-                : 'text-[#98A3B8] hover:text-white'
+                ? 'bg-blue-600 text-white shadow-xs'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
             }`}
           >
-            FAQ & Knowledge Base
+            <HelpCircle className="w-3.5 h-3.5" />
+            <span>Frequently Asked Questions</span>
           </button>
           <button
             onClick={() => setActiveTab('ticket')}
-            className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
               activeTab === 'ticket'
-                ? 'bg-gradient-to-r from-[#35D7FF] to-[#8B5CF6] text-[#080D1B]'
-                : 'text-[#98A3B8] hover:text-white'
+                ? 'bg-blue-600 text-white shadow-xs'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
             }`}
           >
-            Create Ticket
+            <MessageSquare className="w-3.5 h-3.5" />
+            <span>Open Support Request</span>
           </button>
           <button
             onClick={() => setActiveTab('status')}
-            className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
               activeTab === 'status'
-                ? 'bg-gradient-to-r from-[#35D7FF] to-[#8B5CF6] text-[#080D1B]'
-                : 'text-[#98A3B8] hover:text-white'
+                ? 'bg-blue-600 text-white shadow-xs'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
             }`}
           >
-            Ticket History ({ticketHistory.length})
+            <Ticket className="w-3.5 h-3.5" />
+            <span>My Tickets ({ticketHistory.length})</span>
           </button>
         </div>
 
-        {/* TAB 1: FAQ */}
+        {/* TAB 1: FAQ Search & Accordion */}
         {activeTab === 'faq' && (
           <div className="space-y-4">
-            <div className="relative">
-              <Search className="absolute left-3.5 top-3 w-4 h-4 text-[#35D7FF]" />
-              <input
-                type="text"
-                value={faqSearch}
-                onChange={(e) => setFaqSearch(e.target.value)}
-                placeholder="Search common questions, tutorials, or troubleshooting..."
-                className="w-full bg-[#111B35]/80 border border-[#35D7FF]/20 rounded-xl pl-10 pr-4 py-2.5 text-xs md:text-sm text-white placeholder-[#98A3B8]/60 focus:outline-none focus:border-[#35D7FF]"
-              />
+            <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm">
+              <div className="relative">
+                <Search className="absolute left-3.5 top-3 w-4 h-4 text-slate-400" />
+                <input
+                  type="text"
+                  value={faqSearch}
+                  onChange={(e) => setFaqSearch(e.target.value)}
+                  placeholder="Search questions about avatar, search grounding, tutoring, or developer mode..."
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-3 py-2 text-xs md:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:bg-white transition-colors"
+                />
+              </div>
             </div>
 
             <div className="space-y-3">
-              {filteredFaqs.map((faq, i) => {
-                const isOpen = expandedFaq === i;
+              {filteredFaqs.map((faq, idx) => {
+                const isExpanded = expandedFaq === idx;
                 return (
                   <div
-                    key={i}
-                    className="p-4 rounded-xl bg-[#111B35]/70 border border-[#35D7FF]/15 transition-all"
+                    key={idx}
+                    className="rounded-2xl bg-white border border-slate-200 overflow-hidden shadow-xs"
                   >
                     <button
-                      onClick={() => setExpandedFaq(isOpen ? null : i)}
-                      className="w-full flex items-center justify-between text-left text-xs md:text-sm font-bold text-white hover:text-[#35D7FF] transition-colors"
+                      onClick={() => setExpandedFaq(isExpanded ? null : idx)}
+                      className="w-full p-4 text-left flex items-center justify-between text-xs md:text-sm font-bold text-slate-900 hover:bg-slate-50 transition-colors cursor-pointer"
                     >
                       <span>{faq.q}</span>
-                      {isOpen ? <ChevronUp className="w-4 h-4 shrink-0 text-[#35D7FF]" /> : <ChevronDown className="w-4 h-4 shrink-0" />}
+                      {isExpanded ? (
+                        <ChevronUp className="w-4 h-4 text-blue-600 shrink-0 ml-2" />
+                      ) : (
+                        <ChevronDown className="w-4 h-4 text-slate-400 shrink-0 ml-2" />
+                      )}
                     </button>
-                    {isOpen && (
-                      <p className="mt-3 text-xs text-[#98A3B8] leading-relaxed border-t border-white/5 pt-2">
+                    {isExpanded && (
+                      <div className="px-4 pb-4 pt-1 text-xs text-slate-600 leading-relaxed border-t border-slate-100 bg-slate-50/50">
                         {faq.a}
-                      </p>
+                      </div>
                     )}
                   </div>
                 );
@@ -184,82 +192,87 @@ export const SupportWorkspace: React.FC = () => {
           </div>
         )}
 
-        {/* TAB 2: Create Ticket */}
+        {/* TAB 2: Support Ticket Submission */}
         {activeTab === 'ticket' && (
           <form
             onSubmit={handleTicketSubmit}
-            className="p-6 rounded-2xl bg-[#111B35]/80 border border-[#35D7FF]/20 space-y-4 shadow-xl"
+            className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-4"
           >
-            <h3 className="text-base font-bold text-white">Open a Support Request</h3>
+            <h3 className="text-base font-bold text-slate-900">Open a Support Request</h3>
+            <p className="text-xs text-slate-500">
+              Our engineering team responds to priority inquiries promptly.
+            </p>
 
-            <div className="space-y-1">
-              <label className="text-xs font-semibold text-[#98A3B8]">Your Contact Email:</label>
-              <input
-                type="email"
-                value={userEmail}
-                onChange={(e) => setUserEmail(e.target.value)}
-                placeholder="you@domain.com"
-                className="w-full bg-[#080D1B] border border-[#35D7FF]/20 rounded-xl px-4 py-2 text-xs text-white placeholder-[#98A3B8]/50 focus:outline-none focus:border-[#35D7FF]"
-              />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-slate-700">Subject</label>
+                <input
+                  type="text"
+                  required
+                  value={subject}
+                  onChange={(e) => setSubject(e.target.value)}
+                  placeholder="Brief summary of request..."
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs md:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:bg-white"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-xs font-semibold text-slate-700">Your Email</label>
+                <input
+                  type="email"
+                  value={userEmail}
+                  onChange={(e) => setUserEmail(e.target.value)}
+                  placeholder="contact@example.com"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs md:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:bg-white"
+                />
+              </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-[#98A3B8]">Category:</label>
+                <label className="text-xs font-semibold text-slate-700">Category</label>
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  className="w-full bg-[#080D1B] border border-[#35D7FF]/20 rounded-xl px-3 py-2 text-xs text-white outline-none cursor-pointer"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-800 outline-none cursor-pointer"
                 >
                   <option value="Technical Issue">Technical Issue</option>
-                  <option value="AI Integration & API">AI Integration & API</option>
-                  <option value="Teacher / Education Feature">Teacher / Education Feature</option>
-                  <option value="Billing & Subscription">Billing & Subscription</option>
-                  <option value="Security & Privacy">Security & Privacy</option>
+                  <option value="AI Output Quality">AI Output Quality</option>
+                  <option value="Billing & Quota">Billing & Quota</option>
+                  <option value="Feature Request">Feature Request</option>
                 </select>
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-semibold text-[#98A3B8]">Priority:</label>
+                <label className="text-xs font-semibold text-slate-700">Priority Level</label>
                 <select
                   value={priority}
                   onChange={(e) => setPriority(e.target.value)}
-                  className="w-full bg-[#080D1B] border border-[#35D7FF]/20 rounded-xl px-3 py-2 text-xs text-white outline-none cursor-pointer"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-800 outline-none cursor-pointer"
                 >
-                  <option value="low">Low</option>
-                  <option value="normal">Normal</option>
-                  <option value="high">High</option>
-                  <option value="urgent">Urgent</option>
+                  <option value="low">Low (General Feedback)</option>
+                  <option value="normal">Normal (Standard)</option>
+                  <option value="high">High (Urgent Disruption)</option>
                 </select>
               </div>
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-[#98A3B8]">Subject:</label>
-              <input
-                type="text"
-                value={subject}
-                onChange={(e) => setSubject(e.target.value)}
-                placeholder="Brief summary of your question or issue..."
-                className="w-full bg-[#080D1B] border border-[#35D7FF]/20 rounded-xl px-4 py-2 text-xs text-white placeholder-[#98A3B8]/50 focus:outline-none focus:border-[#35D7FF]"
-              />
-            </div>
-
-            <div className="space-y-1">
-              <label className="text-xs font-semibold text-[#98A3B8]">Detailed Description:</label>
+              <label className="text-xs font-semibold text-slate-700">Detailed Message</label>
               <textarea
+                required
+                rows={4}
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                rows={4}
-                placeholder="Provide steps to reproduce or details regarding your inquiry..."
-                className="w-full bg-[#080D1B] border border-[#35D7FF]/20 rounded-xl px-4 py-2.5 text-xs text-white placeholder-[#98A3B8]/50 focus:outline-none focus:border-[#35D7FF] resize-none"
+                placeholder="Describe your question or issue in detail..."
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs md:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:bg-white"
               />
             </div>
 
             <button
               type="submit"
-              disabled={!subject.trim() || !message.trim() || isLoading}
-              className="w-full py-3 rounded-xl bg-gradient-to-r from-[#35D7FF] to-[#8B5CF6] text-[#080D1B] font-bold text-xs disabled:opacity-50 hover:brightness-110 active:scale-[0.99] transition-all flex items-center justify-center gap-2"
+              disabled={isLoading}
+              className="w-full py-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold text-xs hover:from-blue-700 hover:to-indigo-700 active:scale-95 transition-all flex items-center justify-center gap-2 shadow-xs cursor-pointer"
             >
               {isLoading ? (
                 <>
@@ -269,41 +282,51 @@ export const SupportWorkspace: React.FC = () => {
               ) : (
                 <>
                   <Send className="w-4 h-4" />
-                  <span>Submit Ticket to Care Center</span>
+                  <span>Submit Ticket</span>
                 </>
               )}
             </button>
           </form>
         )}
 
-        {/* TAB 3: Ticket Status */}
+        {/* TAB 3: Ticket Status List */}
         {activeTab === 'status' && (
           <div className="space-y-4">
-            <h3 className="text-sm font-bold text-white uppercase tracking-wider">
-              Your Support Inquiries
-            </h3>
-            <div className="space-y-3">
-              {ticketHistory.map((t) => (
-                <div
-                  key={t.id}
-                  className="p-4 rounded-xl bg-[#111B35]/80 border border-[#35D7FF]/15 space-y-2"
-                >
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="font-mono font-bold text-[#35D7FF]">{t.id}</span>
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/20 text-emerald-400">
-                      {t.status}
-                    </span>
+            {createdTicket && (
+              <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                <span>Ticket #{createdTicket.id} received. Our care team is reviewing it.</span>
+              </div>
+            )}
+
+            <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-4">
+              <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">
+                Active & Past Support Inquiries
+              </h3>
+
+              <div className="space-y-3">
+                {ticketHistory.map((t) => (
+                  <div
+                    key={t.id}
+                    className="p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs"
+                  >
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono text-xs font-bold text-blue-600">{t.id}</span>
+                        <span className="text-xs font-semibold text-slate-900">{t.subject}</span>
+                      </div>
+                      <div className="text-[11px] text-slate-500 mt-1">
+                        Category: {t.category} · Priority: {t.priority} · {t.userEmail}
+                      </div>
+                    </div>
+                    <div>
+                      <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                        {t.status}
+                      </span>
+                    </div>
                   </div>
-                  <div className="text-sm font-bold text-white">{t.subject}</div>
-                  <div className="flex items-center gap-3 text-[11px] text-[#98A3B8]">
-                    <span>Category: {t.category}</span>
-                    <span>·</span>
-                    <span>Priority: {t.priority.toUpperCase()}</span>
-                    <span>·</span>
-                    <span>ETA: {t.estimatedResolution}</span>
-                  </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         )}

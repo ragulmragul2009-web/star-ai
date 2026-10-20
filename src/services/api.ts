@@ -20,15 +20,17 @@ export const StarApi = {
     }
   },
 
-  // Main multimodal chat with optional web search grounding
+  // Main multimodal chat with optional web search grounding, explanation level, and language
   async sendChat({
     messages,
     prompt,
     systemInstruction,
-    model = 'gemini-3.8-flash',
+    model = 'gemini-3.1-flash-lite',
     enableSearch = false,
     temperature = 0.7,
     attachments = [],
+    explanationLevel = 'normal',
+    preferredLanguage = 'en',
     signal
   }: {
     messages?: ChatMessage[];
@@ -38,6 +40,8 @@ export const StarApi = {
     enableSearch?: boolean;
     temperature?: number;
     attachments?: any[];
+    explanationLevel?: 'basic' | 'normal' | 'advanced';
+    preferredLanguage?: string;
     signal?: AbortSignal;
   }) {
     const res = await fetch('/api/chat', {
@@ -51,7 +55,9 @@ export const StarApi = {
         model,
         enableSearch,
         temperature,
-        attachments
+        attachments,
+        explanationLevel,
+        preferredLanguage
       }),
     });
     if (!res.ok) {
@@ -98,6 +104,66 @@ export const StarApi = {
     });
     if (!res.ok) {
       const err = await res.json().catch(() => ({ error: 'Lesson generation failed' }));
+      throw new Error(err.error || `HTTP error ${res.status}`);
+    }
+    return await res.json();
+  },
+
+  // AI Teacher evaluate student solution
+  async evaluateAnswer({
+    lessonTopic,
+    practiceExercise,
+    studentAnswer,
+    level = 'beginner'
+  }: {
+    lessonTopic: string;
+    practiceExercise: string;
+    studentAnswer: string;
+    level?: string;
+  }): Promise<{ evaluation: any }> {
+    const res = await fetch('/api/teacher/evaluate-answer', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ lessonTopic, practiceExercise, studentAnswer, level }),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ error: 'Evaluation failed' }));
+      throw new Error(err.error || `HTTP error ${res.status}`);
+    }
+    return await res.json();
+  },
+
+  // AI Teacher ask follow-up in context
+  async askTeacherFollowup({
+    lessonTopic,
+    lessonSummary,
+    question
+  }: {
+    lessonTopic: string;
+    lessonSummary: string;
+    question: string;
+  }): Promise<{ answer: string }> {
+    const res = await fetch('/api/teacher/follow-up', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ lessonTopic, lessonSummary, question }),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ error: 'Follow-up question failed' }));
+      throw new Error(err.error || `HTTP error ${res.status}`);
+    }
+    return await res.json();
+  },
+
+  // Admin telemetry and access verification
+  async checkAdminTelemetry(role: string): Promise<any> {
+    const res = await fetch('/api/admin/telemetry', {
+      headers: {
+        'x-user-role': role
+      }
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ error: 'Access Denied' }));
       throw new Error(err.error || `HTTP error ${res.status}`);
     }
     return await res.json();

@@ -61,18 +61,18 @@ export const AvatarLiveWorkspace: React.FC<AvatarLiveWorkspaceProps> = ({
   };
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-gradient-to-b from-[#080D1B] via-[#0D152D] to-[#080D1B] p-4 md:p-8 overflow-y-auto">
+    <div className="flex-1 flex flex-col h-full bg-gradient-to-b from-slate-50 via-blue-50/20 to-slate-50 p-4 md:p-8 overflow-y-auto">
       <div className="max-w-4xl mx-auto w-full flex-1 flex flex-col items-center justify-between">
         {/* Header Title */}
         <div className="text-center space-y-1 mb-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#35D7FF]/10 border border-[#35D7FF]/20 text-xs font-bold text-[#35D7FF]">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-xs font-bold text-blue-600">
             <Sparkles className="w-3.5 h-3.5" />
             <span>IMMERSIVE AI COMPANION</span>
           </div>
-          <h2 className="text-2xl md:text-3xl font-extrabold text-white">
-            Meet <span className="bg-gradient-to-r from-[#35D7FF] to-[#8B5CF6] bg-clip-text text-transparent">STAR</span>
+          <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900">
+            Meet <span className="bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">STAR</span>
           </h2>
-          <p className="text-xs md:text-sm text-[#98A3B8]">
+          <p className="text-xs md:text-sm text-slate-500">
             Real-time conversational visual human assistant with procedural lip-sync and audio awareness.
           </p>
         </div>
@@ -103,7 +103,7 @@ export const AvatarLiveWorkspace: React.FC<AvatarLiveWorkspaceProps> = ({
           />
 
           {/* Style Selector Pills */}
-          <div className="flex items-center gap-2 mt-4 p-1.5 rounded-2xl bg-[#111B35]/80 border border-[#35D7FF]/15 backdrop-blur-md">
+          <div className="flex items-center gap-2 mt-4 p-1.5 rounded-2xl bg-white border border-slate-200 shadow-xs">
             {[
               { id: '3d-human' as AvatarStyle, label: '3D Human' },
               { id: 'cyber-hologram' as AvatarStyle, label: 'Hologram' },
@@ -113,10 +113,10 @@ export const AvatarLiveWorkspace: React.FC<AvatarLiveWorkspaceProps> = ({
               <button
                 key={st.id}
                 onClick={() => onChangeAvatarStyle(st.id)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all ${
+                className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
                   avatarStyle === st.id
-                    ? 'bg-gradient-to-r from-[#35D7FF] to-[#8B5CF6] text-[#080D1B] shadow-md shadow-[#35D7FF]/30'
-                    : 'text-[#98A3B8] hover:text-white hover:bg-white/5'
+                    ? 'bg-blue-600 text-white shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                 }`}
               >
                 {st.label}
@@ -128,15 +128,15 @@ export const AvatarLiveWorkspace: React.FC<AvatarLiveWorkspaceProps> = ({
         {/* Spoken Dialogue Teleprompter */}
         <div className="w-full max-w-2xl space-y-3 mb-6">
           {lastUserSpeech && (
-            <div className="p-3 rounded-xl bg-[#1E293B]/70 border border-[#35D7FF]/15 text-xs text-white">
-              <span className="font-bold text-[#35D7FF] mr-2">You:</span>
+            <div className="p-3 rounded-xl bg-white border border-slate-200 text-xs text-slate-800 shadow-xs">
+              <span className="font-bold text-blue-600 mr-2">You:</span>
               <span>{lastUserSpeech}</span>
             </div>
           )}
 
           {lastAiResponse && (
-            <div className="p-4 rounded-xl bg-[#111B35]/90 border border-[#8B5CF6]/30 text-xs md:text-sm text-[#F5F7FF] shadow-lg">
-              <div className="flex items-center justify-between font-bold text-[#8B5CF6] mb-1">
+            <div className="p-4 rounded-xl bg-white border border-blue-200 text-xs md:text-sm text-slate-800 shadow-sm">
+              <div className="flex items-center justify-between font-bold text-blue-600 mb-1">
                 <span>STAR Assistant:</span>
                 <button
                   onClick={() => {
@@ -161,10 +161,10 @@ export const AvatarLiveWorkspace: React.FC<AvatarLiveWorkspaceProps> = ({
             <button
               onClick={onToggleVoice}
               title={voiceEnabled ? 'Mute AI voice' : 'Enable AI voice'}
-              className={`p-3 rounded-2xl border transition-all ${
+              className={`p-3 rounded-2xl border transition-all cursor-pointer ${
                 voiceEnabled
-                  ? 'bg-[#111B35] text-[#35D7FF] border-[#35D7FF]/30'
-                  : 'bg-[#111B35] text-[#98A3B8]/60 border-white/5'
+                  ? 'bg-blue-50 text-blue-600 border-blue-200'
+                  : 'bg-white text-slate-400 border-slate-200 hover:text-slate-700'
               }`}
             >
               {voiceEnabled ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
@@ -173,10 +173,10 @@ export const AvatarLiveWorkspace: React.FC<AvatarLiveWorkspaceProps> = ({
             {/* Giant Center Mic Button */}
             <button
               onClick={onToggleListening}
-              className={`relative p-5 rounded-full transition-all duration-300 ${
+              className={`relative p-5 rounded-full transition-all duration-300 cursor-pointer ${
                 isListening
-                  ? 'bg-rose-500 text-white shadow-2xl shadow-rose-500/50 scale-110 animate-pulse'
-                  : 'bg-gradient-to-tr from-[#35D7FF] to-[#8B5CF6] text-[#080D1B] shadow-xl shadow-[#35D7FF]/30 hover:scale-105 active:scale-95'
+                  ? 'bg-rose-500 text-white shadow-lg shadow-rose-500/30 scale-110 animate-pulse'
+                  : 'bg-gradient-to-tr from-blue-600 to-indigo-600 text-white shadow-md hover:scale-105 active:scale-95'
               }`}
             >
               {isListening ? (
@@ -193,15 +193,15 @@ export const AvatarLiveWorkspace: React.FC<AvatarLiveWorkspaceProps> = ({
               title="Stop speaking"
               className={`p-3 rounded-2xl border transition-all ${
                 isSpeaking
-                  ? 'bg-[#111B35] text-amber-400 border-amber-400/40 hover:bg-amber-400/10'
-                  : 'bg-[#111B35] text-[#98A3B8]/30 border-white/5 cursor-not-allowed'
+                  ? 'bg-amber-50 text-amber-600 border-amber-200 hover:bg-amber-100 cursor-pointer'
+                  : 'bg-white text-slate-300 border-slate-200 cursor-not-allowed'
               }`}
             >
               <VolumeX className="w-5 h-5" />
             </button>
           </div>
 
-          <p className="text-xs text-[#98A3B8]">
+          <p className="text-xs text-slate-500 font-medium">
             {isListening
               ? '🎙️ Listening... speak clearly into your microphone'
               : 'Tap microphone to speak with STAR in real time'}
@@ -214,12 +214,12 @@ export const AvatarLiveWorkspace: React.FC<AvatarLiveWorkspaceProps> = ({
               value={quickInput}
               onChange={(e) => setQuickInput(e.target.value)}
               placeholder="Or type a question to hear STAR speak..."
-              className="flex-1 bg-[#111B35]/80 border border-[#35D7FF]/20 rounded-xl px-4 py-2 text-xs md:text-sm text-white placeholder-[#98A3B8]/50 focus:outline-none focus:border-[#35D7FF]/60"
+              className="flex-1 bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs md:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 shadow-xs"
             />
             <button
               type="submit"
               disabled={!quickInput.trim()}
-              className="p-2.5 rounded-xl bg-[#35D7FF] text-[#080D1B] font-bold disabled:opacity-40 hover:brightness-110 transition-all"
+              className="p-2.5 rounded-xl bg-blue-600 text-white font-bold disabled:opacity-40 hover:bg-blue-700 transition-all shadow-xs cursor-pointer"
             >
               <Send className="w-4 h-4" />
             </button>
@@ -231,7 +231,7 @@ export const AvatarLiveWorkspace: React.FC<AvatarLiveWorkspaceProps> = ({
               <button
                 key={i}
                 onClick={() => onSendVoiceMessage(p)}
-                className="text-[11px] px-2.5 py-1 rounded-lg bg-[#111B35]/60 hover:bg-[#111B35] border border-white/5 hover:border-[#35D7FF]/30 text-[#98A3B8] hover:text-[#35D7FF] transition-all"
+                className="text-[11px] px-2.5 py-1 rounded-lg bg-white hover:bg-slate-50 border border-slate-200 hover:border-blue-300 text-slate-600 hover:text-blue-600 transition-all shadow-xs cursor-pointer"
               >
                 &ldquo;{p}&rdquo;
               </button>

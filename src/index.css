@@ -2,14 +2,14 @@
 
 @layer base {
   :root {
-    --bg-primary: #080D1B;
-    --bg-surface: #111B35;
-    --bg-card: rgba(17, 27, 53, 0.7);
-    --border-subtle: rgba(53, 215, 255, 0.12);
-    --accent-cyan: #35D7FF;
-    --accent-violet: #8B5CF6;
-    --text-primary: #F5F7FF;
-    --text-muted: #98A3B8;
+    --bg-primary: #F8FAFC;
+    --bg-surface: #FFFFFF;
+    --bg-card: #FFFFFF;
+    --border-subtle: #E2E8F0;
+    --accent-blue: #2563EB;
+    --accent-violet: #7C3AED;
+    --text-primary: #0F172A;
+    --text-muted: #64748B;
   }
 
   body {
@@ -19,29 +19,29 @@
   }
 }
 
-/* Custom scrollbars */
+/* Custom light scrollbars */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(8, 13, 27, 0.6);
+  background: #F1F5F9;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(53, 215, 255, 0.25);
+  background: #CBD5E1;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(53, 215, 255, 0.5);
+  background: #94A3B8;
 }
 
-/* Starfield animations */
+/* Light ambient animations */
 @keyframes twinkle {
-  0%, 100% { opacity: 0.2; transform: scale(0.9); }
-  50% { opacity: 1; transform: scale(1.1); }
+  0%, 100% { opacity: 0.3; transform: scale(0.95); }
+  50% { opacity: 1; transform: scale(1.05); }
 }
 
 @keyframes orbit {
@@ -50,8 +50,8 @@
 }
 
 @keyframes pulseGlow {
-  0%, 100% { filter: drop-shadow(0 0 12px rgba(53, 215, 255, 0.4)); }
-  50% { filter: drop-shadow(0 0 24px rgba(139, 92, 246, 0.7)); }
+  0%, 100% { filter: drop-shadow(0 0 8px rgba(37, 99, 235, 0.25)); }
+  50% { filter: drop-shadow(0 0 16px rgba(124, 58, 237, 0.35)); }
 }
 
 .animate-twinkle {
@@ -66,10 +66,11 @@
   animation: pulseGlow 4s ease-in-out infinite;
 }
 
-/* Markdown styling helper */
+/* Markdown styling helper for light mode */
 .prose-star pre {
-  background-color: #0b1124;
-  border: 1px solid rgba(53, 215, 255, 0.15);
+  background-color: #0F172A;
+  color: #F8FAFC;
+  border: 1px solid #334155;
   border-radius: 0.75rem;
   padding: 1rem;
   overflow-x: auto;
@@ -87,11 +88,13 @@
 }
 
 .prose-star th, .prose-star td {
-  border: 1px solid rgba(152, 163, 184, 0.2);
+  border: 1px solid #E2E8F0;
   padding: 0.5rem 0.75rem;
   text-align: left;
 }
 
 .prose-star th {
-  background: rgba(53, 215, 255, 0.08);
+  background: #F1F5F9;
+  font-weight: 600;
+  color: #1E293B;
 }
