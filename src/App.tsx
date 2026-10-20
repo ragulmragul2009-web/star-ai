@@ -44,7 +44,7 @@ export default function App() {
   const [authOpen, setAuthOpen] = useState(false);
 
   // Model & Search Grounding
-  const [selectedModel, setSelectedModel] = useState('gemini-3.1-flash-lite');
+  const [selectedModel, setSelectedModel] = useState('gemini-3.8-flash');
   const [enableSearch, setEnableSearch] = useState(false);
   const [explanationLevel, setExplanationLevel] = useState<'basic' | 'normal' | 'advanced'>('normal');
   const [preferredLanguage, setPreferredLanguage] = useState('en');

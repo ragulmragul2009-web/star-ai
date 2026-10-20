@@ -144,8 +144,8 @@ export const TopBar: React.FC<TopBarProps> = ({
             onChange={(e) => onSelectModel(e.target.value)}
             className="bg-transparent text-xs font-semibold text-slate-800 outline-none cursor-pointer pr-1"
           >
-            <option value="gemini-3.1-flash-lite">STAR Lite 3.1 (Default)</option>
-            <option value="gemini-3.8-flash">STAR Flash 3.8</option>
+            <option value="gemini-3.8-flash">STAR Flash 3.8 (Default)</option>
+            <option value="gemini-3.1-flash-lite">STAR Lite 3.1</option>
             <option value="gemini-4-argon">STAR Quantum Pro</option>
           </select>
         </div>

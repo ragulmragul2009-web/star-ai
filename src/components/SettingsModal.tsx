@@ -114,9 +114,9 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   onChange={(e) => onSelectModel(e.target.value)}
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs text-slate-900 outline-none cursor-pointer"
                 >
-                  <option value="gemini-3.1-flash-lite">STAR Lite (gemini-3.1-flash-lite) - Ultra Fast & Recommended</option>
-                  <option value="gemini-3.8-flash">STAR Flash (gemini-3.8-flash) - Multimodal Reasoning</option>
-                  <option value="gemini-4-argon">STAR Quantum Pro (gemini-4-argon) - Deep STEM Reasoning</option>
+                  <option value="gemini-3.8-flash">STAR Flash (gemini-3.8-flash) - Multimodal Reasoning & Coding (Default)</option>
+                  <option value="gemini-3.1-flash-lite">STAR Lite (gemini-3.1-flash-lite) - Ultra Fast & Cost Efficient</option>
+                  <option value="gemini-4-argon">STAR Quantum Pro (gemini-4-argon) - Advanced STEM Reasoning</option>
                 </select>
                 <p className="text-[11px] text-slate-500">
                   Powered by Google GenAI. All keys managed securely server-side.
