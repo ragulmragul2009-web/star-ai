@@ -32,12 +32,32 @@ import { SupportWorkspace } from './components/SupportWorkspace';
 import { AdminWorkspace } from './components/AdminWorkspace';
 import { SettingsModal } from './components/SettingsModal';
 import { AuthModal } from './components/AuthModal';
+import { MessageSquare, GraduationCap, Layers, Sparkles, Menu } from 'lucide-react';
 
 export default function App() {
   // Navigation & Workspace State
   const [currentWorkspace, setCurrentWorkspace] = useState<WorkspaceId>('chat');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+
+  // Responsive self-arranging interface across all devices (mobile, tablet, desktop)
+  useEffect(() => {
+    const handleDeviceAdaptation = () => {
+      const width = window.innerWidth;
+      if (width < 1024) {
+        setIsSidebarCollapsed(true);
+      } else {
+        setIsSidebarCollapsed(false);
+      }
+      if (width >= 1024) {
+        setMobileSidebarOpen(false);
+      }
+    };
+
+    handleDeviceAdaptation();
+    window.addEventListener('resize', handleDeviceAdaptation);
+    return () => window.removeEventListener('resize', handleDeviceAdaptation);
+  }, []);
 
   // Modals
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -506,8 +526,12 @@ export default function App() {
         <div className="absolute bottom-1/3 right-1/4 w-96 h-96 bg-indigo-100/60 rounded-full blur-3xl animate-pulse [animation-delay:2s]" />
       </div>
 
-      {/* Main Sidebar Navigation */}
-      <div className="relative z-20 flex">
+      {/* Main Sidebar Navigation: Self-arranging drawer on mobile/tablet, docked on desktop */}
+      <div
+        className={`fixed inset-y-0 left-0 z-50 transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0 ${
+          mobileSidebarOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full lg:translate-x-0'
+        }`}
+      >
         <Sidebar
           currentWorkspace={currentWorkspace}
           onSelectWorkspace={(id) => {
@@ -523,8 +547,14 @@ export default function App() {
           onNewChat={handleNewChat}
           onDeleteConversation={handleDeleteConversation}
           onTogglePinConversation={handleTogglePinConversation}
-          onOpenSettings={() => setSettingsOpen(true)}
-          onOpenAuth={() => setAuthOpen(true)}
+          onOpenSettings={() => {
+            setSettingsOpen(true);
+            setMobileSidebarOpen(false);
+          }}
+          onOpenAuth={() => {
+            setAuthOpen(true);
+            setMobileSidebarOpen(false);
+          }}
           isCollapsed={isSidebarCollapsed}
           onToggleCollapse={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
           userName={currentUser.name}
@@ -536,12 +566,12 @@ export default function App() {
       {mobileSidebarOpen && (
         <div
           onClick={() => setMobileSidebarOpen(false)}
-          className="fixed inset-0 z-40 bg-black/40 backdrop-blur-xs lg:hidden"
+          className="fixed inset-0 z-40 bg-black/40 backdrop-blur-xs lg:hidden transition-opacity"
         />
       )}
 
       {/* Main App Workspace Stage */}
-      <div className="relative z-10 flex-1 flex flex-col h-full overflow-hidden">
+      <div className="relative z-10 flex-1 flex flex-col h-full overflow-hidden pb-14 lg:pb-0">
         {/* Universal TopBar */}
         <TopBar
           currentWorkspace={currentWorkspace}
@@ -650,6 +680,57 @@ export default function App() {
             />
           )}
         </main>
+
+        {/* Mobile Bottom Navigation Bar: Self-arranging quick switch for small screens */}
+        <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-white/95 backdrop-blur-md border-t border-slate-200 px-2 py-1 flex items-center justify-around shadow-lg">
+          <button
+            onClick={() => setCurrentWorkspace('chat')}
+            className={`flex flex-col items-center justify-center py-1 px-3 rounded-xl text-[10px] font-semibold transition-colors ${
+              currentWorkspace === 'chat' ? 'text-blue-600 bg-blue-50/80' : 'text-slate-500 hover:text-slate-900'
+            }`}
+          >
+            <MessageSquare className="w-4 h-4 mb-0.5" />
+            <span>Chat</span>
+          </button>
+
+          <button
+            onClick={() => setCurrentWorkspace('teacher')}
+            className={`flex flex-col items-center justify-center py-1 px-3 rounded-xl text-[10px] font-semibold transition-colors ${
+              currentWorkspace === 'teacher' ? 'text-blue-600 bg-blue-50/80' : 'text-slate-500 hover:text-slate-900'
+            }`}
+          >
+            <GraduationCap className="w-4 h-4 mb-0.5" />
+            <span>Teacher</span>
+          </button>
+
+          <button
+            onClick={() => setCurrentWorkspace('app-builder')}
+            className={`flex flex-col items-center justify-center py-1 px-3 rounded-xl text-[10px] font-semibold transition-colors ${
+              currentWorkspace === 'app-builder' ? 'text-blue-600 bg-blue-50/80' : 'text-slate-500 hover:text-slate-900'
+            }`}
+          >
+            <Layers className="w-4 h-4 mb-0.5" />
+            <span>Builder</span>
+          </button>
+
+          <button
+            onClick={() => setCurrentWorkspace('avatar-live')}
+            className={`flex flex-col items-center justify-center py-1 px-3 rounded-xl text-[10px] font-semibold transition-colors ${
+              currentWorkspace === 'avatar-live' ? 'text-blue-600 bg-blue-50/80' : 'text-slate-500 hover:text-slate-900'
+            }`}
+          >
+            <Sparkles className="w-4 h-4 mb-0.5" />
+            <span>Avatar</span>
+          </button>
+
+          <button
+            onClick={() => setMobileSidebarOpen(true)}
+            className="flex flex-col items-center justify-center py-1 px-3 rounded-xl text-[10px] font-semibold text-slate-500 hover:text-slate-900 transition-colors"
+          >
+            <Menu className="w-4 h-4 mb-0.5" />
+            <span>Menu</span>
+          </button>
+        </nav>
       </div>
 
       {/* Settings Modal */}
